@@ -1,0 +1,36 @@
+# Java / Maven
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/*.class
+backend/hs_err_pid*.log
+
+# Node / uni-app
+frontend/node_modules/
+frontend/dist/
+frontend/unpackage/
+frontend/.hbuilderx/
+frontend/.env.local
+
+# IDE
+.idea/
+*.iml
+.vscode/
+!.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Secrets
+.env
+deploy/.env
+
+# Backup artifacts (brainstorm helper scripts)
+work/
+.superpowers/brainstorm/
+
+# Docker volumes (if bound-mounted locally)
+deploy/data/
