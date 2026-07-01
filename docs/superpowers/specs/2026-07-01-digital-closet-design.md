@@ -1,380 +1,380 @@
-﻿# Digital Closet (电子衣橱) Design Spec
+﻿# 电子衣橱 设计文档
 
-- **Date:** 2026-07-01
-- **Status:** Approved (pending user review of this written spec)
-- **Scope:** MVP for personal use — single user, self-hosted on user's PC.
+- **日期：** 2026-07-01
+- **状态：** 已通过设计阶段（待用户对本文档做最后审阅）
+- **范围：** 个人使用 MVP——单用户，自托管在用户自己的电脑上。
 
-## 1. Overview
+## 1. 概述
 
-A digital closet (电子衣橱) that lets the owner catalog clothing, compose outfits, plan what to wear via a calendar, view usage statistics, and share outfits as images. First version is single-user, self-hosted, with no authentication.
+一个电子衣橱（digital closet），让主人记录衣物、组合搭配、通过日历规划每日穿搭、查看穿着统计，并把搭配导出成图片分享。第一版面向单用户、自托管，**不**做登录鉴权。
 
-### Goals
+### 目标
 
-- Catalog every clothing item with photos, category, color, season, tags, purchase price.
-- Combine items into outfits and edit/save them.
-- Plan daily outfits on a calendar; support multiple outfits per day.
-- Surface useful stats (most/least worn, cost-per-wear, items not worn in N days).
-- Share an outfit by exporting it as an image (handled by the frontend canvas-to-image export; no backend work needed).
+- 录入每一件衣物：照片、分类、颜色、季节、标签、购入价格。
+- 把多件衣物组合成搭配并保存、编辑。
+- 通过日历规划每天穿什么；支持同一天多条记录。
+- 提供有用的统计：最常穿/最少穿、单件 cost-per-wear、N 天没穿过的衣物。
+- 一键把搭配导出成图片分享（前端 canvas → 图片，不需要后端参与）。
 
-### Non-Goals (YAGNI for MVP)
+### 非目标（MVP 不做）
 
-- Multi-user / social features (friend system, comments, public profiles).
-- AI auto-tagging / category detection from images.
-- E-commerce / shopping integrations.
-- Native iOS/Android push notifications.
+- 多用户 / 社交功能（好友、评论、公开主页）。
+- AI 自动识别图片打标签 / 分类。
+- 电商 / 购物整合。
+- 原生 iOS / Android 推送通知。
 
-## 2. Tech Stack
+## 2. 技术选型
 
-| Layer | Choice |
-|-------|--------|
-| Frontend framework | uni-app (Vue 3 + TypeScript) |
-| Frontend UI library | uView Plus |
-| Frontend state | Pinia |
-| Frontend build | Vite |
-| Frontend testing | Vitest + @vue/test-utils (core components only) |
-| Backend language | Java 21 |
-| Backend framework | Spring Boot 3.3+ (Spring Web) |
-| ORM | MyBatis-Plus (`mybatis-plus-boot-starter`) |
-| Database | PostgreSQL 16 |
-| DB schema management | `schema.sql` + `data.sql` loaded by Spring Boot on startup (no Flyway) |
-| Object storage | MinIO (S3-compatible) |
-| Image SDK | MinIO Java SDK |
-| Build | Maven |
-| Backend testing | JUnit 5 + Mockito + Testcontainers (real PG + MinIO via Docker) |
-| API docs | springdoc-openapi → generated OpenAPI 3 spec |
+| 层 | 选择 |
+|----|------|
+| 前端框架 | uni-app（Vue 3 + TypeScript） |
+| 前端 UI 库 | uView Plus |
+| 前端状态 | Pinia |
+| 前端构建 | Vite |
+| 前端测试 | Vitest + @vue/test-utils（仅核心组件） |
+| 后端语言 | Java 21 |
+| 后端框架 | Spring Boot 3.3+（Spring Web） |
+| ORM | MyBatis-Plus（`mybatis-plus-boot-starter`） |
+| 数据库 | PostgreSQL 16 |
+| 数据库 schema 管理 | Spring Boot 启动时加载 `schema.sql` + `data.sql`（**不**用 Flyway） |
+| 对象存储 | MinIO（S3 兼容） |
+| 图片 SDK | MinIO Java SDK |
+| 构建工具 | Maven |
+| 后端测试 | JUnit 5 + Mockito + Testcontainers（Docker 起真实 PG 和 MinIO） |
+| API 文档 | springdoc-openapi → 生成 OpenAPI 3 规范 |
 
-## 3. Architecture
+## 3. 架构
 
 ```
 ┌──────────────────────────────┐
-│ Client (uni-app, single code)│
-│  - WeChat Mini Program       │
-│  - H5 (mobile / desktop)     │
-│  - iOS / Android App         │
+│ 客户端（uni-app 一套代码）     │
+│  - 微信小程序                  │
+│  - H5（手机 / 电脑浏览器）      │
+│  - iOS / Android App          │
 └─────────────┬────────────────┘
-              │ HTTPS REST (no auth in MVP)
+              │ HTTPS REST（MVP 无鉴权）
               ▼
 ┌──────────────────────────────┐
-│ Backend (Spring Boot)        │
-│  - REST controllers          │
-│  - service layer             │
-│  - MyBatis-Plus mappers      │
-│  - MinIO client              │
+│ 后端（Spring Boot）            │
+│  - REST 控制器                 │
+│  - 业务逻辑层                  │
+│  - MyBatis-Plus mappers       │
+│  - MinIO 客户端                │
 └────┬──────────────────┬──────┘
-     │ SQL              │ S3 protocol
+     │ SQL              │ S3 协议
      ▼                  ▼
 ┌──────────┐      ┌──────────┐
 │PostgreSQL│      │  MinIO   │
 └──────────┘      └──────────┘
 ```
 
-### Data flow — image upload
+### 数据流 —— 图片上传
 
-1. Client picks image → `POST /api/v1/clothing/{id}/images` (multipart).
-2. Backend uploads to MinIO, stores resulting `storage_key` in `clothing_image` table, returns the image record.
-3. Client gets the image record back; subsequent reads use `GET /api/v1/images/{key}` which the backend proxies from MinIO.
+1. 客户端选图 → `POST /api/v1/clothing/{id}/images`（multipart）。
+2. 后端把图片上传到 MinIO，把返回的 `storage_key` 写入 `clothing_image` 表，返回图片记录。
+3. 客户端拿到图片记录。后续查看图片时调用 `GET /api/v1/images/{key}`，由后端从 MinIO 代理取出。
 
-### Data flow — image download
+### 数据流 —— 图片下载
 
-- Client requests `GET /api/v1/images/{key}`.
-- Backend fetches the object from MinIO and streams the bytes back (with `ETag`, `Cache-Control` for client caching). No Redis cache in MVP.
+- 客户端请求 `GET /api/v1/images/{key}`。
+- 后端从 MinIO 取出对象，字节流直接回写（带 `ETag`、`Cache-Control` 让客户端缓存）。MVP 不上 Redis 缓存。
 
-### Data flow — calendar entry create
+### 数据流 —— 创建日历条目
 
-1. Client `POST /api/v1/calendar` with `{ date, slot, outfitId, notes }`.
-2. Backend writes `calendar_entry`.
-3. Backend reads `outfit_item` rows for that outfit and writes one `wear_log` per item with `worn_at = entry.date`.
-4. Backend returns the saved entry.
+1. 客户端 `POST /api/v1/calendar`，body：`{ date, slot, outfitId, notes }`。
+2. 后端写入 `calendar_entry`。
+3. 后端读取该搭配的 `outfit_item` 列表，为每件衣物写一条 `wear_log`，`worn_at = entry.date`。
+4. 返回保存后的条目。
 
-## 4. Data Model
+## 4. 数据模型
 
-### Tables
+### 表结构
 
-**`category`** — clothing categories (supports two levels)
+**`category`** —— 衣物分类（支持两级：父分类 → 子分类）
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
-| name | varchar(64) | not null |
-| parent_id | bigint FK→category.id nullable | for sub-categories |
-| sort_order | int | default 0 |
+| name | varchar(64) | 非空 |
+| parent_id | bigint FK→category.id 可空 | 二级分类的父节点 |
+| sort_order | int | 默认 0 |
 
-**`clothing`** — clothing items
+**`clothing`** —— 衣物单品
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
-| name | varchar(128) | not null |
-| brand | varchar(64) | nullable |
-| color_primary | varchar(32) | hex or named |
-| color_secondary | varchar(32) | nullable |
-| size | varchar(32) | nullable |
-| purchase_price | numeric(10,2) | nullable |
-| purchase_date | date | nullable |
-| season | varchar(16) | enum: spring/summer/fall/winter/all |
-| notes | text | nullable |
-| status | varchar(16) | enum: active/discarded/donated/sold, default active |
-| main_image_id | bigint | nullable, points to clothing_image.id |
+| name | varchar(128) | 非空 |
+| brand | varchar(64) | 可空 |
+| color_primary | varchar(32) | hex 或色名 |
+| color_secondary | varchar(32) | 可空 |
+| size | varchar(32) | 可空 |
+| purchase_price | numeric(10,2) | 可空 |
+| purchase_date | date | 可空 |
+| season | varchar(16) | 枚举：spring / summer / fall / winter / all |
+| notes | text | 可空 |
+| status | varchar(16) | 枚举：active / discarded / donated / sold，默认 active |
+| main_image_id | bigint | 可空，指向 clothing_image.id |
 | created_at | timestamptz | |
 | updated_at | timestamptz | |
 
-**`clothing_image`** — images for a clothing item
+**`clothing_image`** —— 单件衣物的多张图片
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
-| clothing_id | bigint FK→clothing.id | not null, on delete cascade |
-| storage_key | varchar(255) | MinIO object key |
-| sort_order | int | default 0 |
-| is_main | boolean | default false |
+| clothing_id | bigint FK→clothing.id | 非空，on delete cascade |
+| storage_key | varchar(255) | MinIO 对象 key |
+| sort_order | int | 默认 0 |
+| is_main | boolean | 默认 false |
 | created_at | timestamptz | |
 
-**`tag`** — free-form tags
+**`tag`** —— 自由标签
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
 | name | varchar(64) | unique |
 
-**`clothing_category`** — M:N clothing ↔ category
+**`clothing_category`** —— 衣物 ↔ 分类 多对多
 
-| Column | Type |
-|--------|------|
+| 列 | 类型 |
+|----|------|
 | clothing_id | bigint FK→clothing.id |
 | category_id | bigint FK→category.id |
 | PK | (clothing_id, category_id) |
 
-**`clothing_tag`** — M:N clothing ↔ tag
+**`clothing_tag`** —— 衣物 ↔ 标签 多对多
 
-| Column | Type |
-|--------|------|
+| 列 | 类型 |
+|----|------|
 | clothing_id | bigint FK |
 | tag_id | bigint FK |
 | PK | (clothing_id, tag_id) |
 
-**`outfit`** — saved outfit
+**`outfit`** —— 保存的搭配
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
-| name | varchar(128) | not null |
-| description | text | nullable |
-| occasion | varchar(64) | nullable (casual/work/sport/...) |
-| season | varchar(16) | nullable |
-| is_favorite | boolean | default false |
-| cover_image_id | bigint | nullable |
+| name | varchar(128) | 非空 |
+| description | text | 可空 |
+| occasion | varchar(64) | 可空（casual / work / sport / ...） |
+| season | varchar(16) | 可空 |
+| is_favorite | boolean | 默认 false |
+| cover_image_id | bigint | 可空 |
 | created_at | timestamptz | |
 | updated_at | timestamptz | |
 
-**`outfit_item`** — M:N outfit ↔ clothing with ordering
+**`outfit_item`** —— 搭配 ↔ 衣物 多对多，带叠放顺序
 
-| Column | Type |
-|--------|------|
+| 列 | 类型 |
+|----|------|
 | outfit_id | bigint FK→outfit.id |
 | clothing_id | bigint FK→clothing.id |
-| sort_order | int | default 0 (layer order, e.g., base=0, mid=1, outer=2) |
+| sort_order | int | 默认 0（叠放层次：内层=0、中间=1、外套=2 ...） |
 | PK | (outfit_id, clothing_id) |
 
-**`calendar_entry`** — one row per planned outfit for a date+slot
+**`calendar_entry`** —— 每天每个 slot 一条记录
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
-| entry_date | date | not null |
-| slot | varchar(16) | enum: morning/afternoon/evening/all_day, default all_day |
-| outfit_id | bigint FK→outfit.id | not null |
-| notes | text | nullable |
+| entry_date | date | 非空 |
+| slot | varchar(16) | 枚举：morning / afternoon / evening / all_day，默认 all_day |
+| outfit_id | bigint FK→outfit.id | 非空 |
+| notes | text | 可空 |
 | created_at | timestamptz | |
 | updated_at | timestamptz | |
 
-Multiple entries per date are allowed (different `slot`s or repeated slots).
+同一天允许多条记录（不同 slot，或同一 slot 多次添加）。
 
-**`wear_log`** — append-only log of each wear
+**`wear_log`** —— 穿着流水，只追加不修改
 
-| Column | Type | Notes |
-|--------|------|-------|
+| 列 | 类型 | 说明 |
+|----|------|------|
 | id | bigserial PK | |
-| clothing_id | bigint FK→clothing.id | not null |
-| calendar_entry_id | bigint FK→calendar_entry.id | nullable (null = manual log) |
-| worn_at | date | not null |
+| clothing_id | bigint FK→clothing.id | 非空 |
+| calendar_entry_id | bigint FK→calendar_entry.id | 可空（null 表示手动记录） |
+| worn_at | date | 非空 |
 | created_at | timestamptz | |
 
-### wear_log rules
+### wear_log 规则
 
-- **Auto-generated** when a `calendar_entry` is created/updated: one log row per `outfit_item` in the entry's outfit, with `worn_at = entry.entry_date`.
-- **Cascade delete** when the source `calendar_entry` is deleted.
-- **Preserved** when the outfit itself is deleted (the wear actually happened).
-- **Manual insert** supported via `POST /api/v1/wear-logs` for items worn outside any planned outfit.
-- **Stats queries** read this table directly (denormalized on purpose for fast reads).
+- **自动生成** —— 当 `calendar_entry` 创建/更新时，给该搭配 `outfit_item` 里的每件衣物各写一条，`worn_at = entry.entry_date`。
+- **级联删除** —— 删除来源 `calendar_entry` 时同步删除其产生的 wear_log。
+- **保留不变** —— 删除搭配本身不动 wear_log（衣服确实穿过的事实不能抹掉）。
+- **支持手动补登** —— 通过 `POST /api/v1/wear-logs` 给没在搭配里的穿着补一条记录。
+- **统计直接读 wear_log** —— 反范式化设计是有意为之，统计查询不需要 JOIN 多张表。
 
-## 5. Module Structure
+## 5. 模块结构
 
-### Frontend (uni-app)
+### 前端（uni-app）
 
 ```
 src/
 ├── pages/
-│   ├── index/                # Home: stats summary + recent
-│   ├── closet/               # Clothing list w/ filter
-│   ├── clothing-detail/
-│   ├── clothing-form/        # Create / edit + image upload
-│   ├── outfits/              # Outfit list
-│   ├── outfit-detail/
-│   ├── outfit-form/          # Compose outfit from clothing
-│   ├── calendar/             # Calendar view + day detail
-│   ├── stats/
-│   └── settings/             # Manage categories, tags, data export
+│   ├── index/                # 首页：统计概览 + 最近穿着
+│   ├── closet/               # 衣物列表 + 筛选
+│   ├── clothing-detail/      # 衣物详情
+│   ├── clothing-form/        # 新增/编辑衣物 + 图片上传
+│   ├── outfits/              # 搭配列表
+│   ├── outfit-detail/        # 搭配详情
+│   ├── outfit-form/          # 从衣物里挑选组合搭配
+│   ├── calendar/             # 日历视图 + 当日详情
+│   ├── stats/                # 统计页
+│   └── settings/             # 设置（分类管理、标签管理、数据导出）
 ├── components/
 │   ├── ClothingCard.vue
-│   ├── OutfitCanvas.vue      # Compose / preview outfit
+│   ├── OutfitCanvas.vue      # 搭配编辑画布
 │   ├── ImageUploader.vue
 │   ├── FilterBar.vue
 │   ├── CategoryPicker.vue
 │   └── TagPicker.vue
-├── api/                      # Generated from OpenAPI (openapi-typescript)
+├── api/                      # 由 OpenAPI 自动生成（openapi-typescript）
 ├── stores/                   # Pinia stores
 └── utils/
 ```
 
-### Backend (Spring Boot, package `com.closet`)
+### 后端（Spring Boot，包名 `com.closet`）
 
 ```
 src/main/java/com/closet/
-├── controller/   # REST controllers
-├── service/      # Business logic incl. WearLogSyncService
+├── controller/   # REST 控制器
+├── service/      # 业务逻辑，含 WearLogSyncService
 ├── mapper/       # MyBatis-Plus mappers
-├── entity/       # DB entities
-├── dto/          # Request / response objects
-├── config/       # MyBatis-PlusConfig, MinioConfig, CorsConfig
-├── common/       # GlobalExceptionHandler, Result wrapper, PageRequest
-└── storage/      # MinioStorageService wrapper
+├── entity/       # 数据库实体
+├── dto/          # 请求 / 响应对象
+├── config/       # MyBatis-PlusConfig、MinioConfig、CorsConfig
+├── common/       # GlobalExceptionHandler、Result 包装、PageRequest
+└── storage/      # MinioStorageService 封装
 ```
 
-## 6. API (versioned `/api/v1`)
+## 6. API（统一前缀 `/api/v1`）
 
-### Clothing
+### 衣物
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/clothing` | List with filters: `categoryId`, `tagId`, `season`, `status`, `keyword`, `page`, `size` |
-| GET | `/clothing/{id}` | Detail |
-| POST | `/clothing` | Create |
-| PUT | `/clothing/{id}` | Update |
-| DELETE | `/clothing/{id}` | Soft-delete (set `status=discarded`) by default |
-| POST | `/clothing/{id}/images` | Multipart upload (single image per request) |
-| DELETE | `/clothing/{id}/images/{imageId}` | Remove image and MinIO object |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/clothing` | 列表，支持筛选 `categoryId`、`tagId`、`season`、`status`、`keyword`、`page`、`size` |
+| GET | `/clothing/{id}` | 详情 |
+| POST | `/clothing` | 创建 |
+| PUT | `/clothing/{id}` | 更新 |
+| DELETE | `/clothing/{id}` | 软删除（默认把 `status` 置为 `discarded`） |
+| POST | `/clothing/{id}/images` | multipart 上传（每次一张） |
+| DELETE | `/clothing/{id}/images/{imageId}` | 删除图片记录 + MinIO 对象 |
 
-### Category / Tag
+### 分类 / 标签
 
-Standard CRUD: `GET/POST/PUT/DELETE /categories`, `GET/POST/PUT/DELETE /tags`.
+标准 CRUD：`GET/POST/PUT/DELETE /categories`、`GET/POST/PUT/DELETE /tags`。
 
-### Outfit
+### 搭配
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/outfits` | List with `season`, `occasion`, `favorite` filters |
-| GET | `/outfits/{id}` | Detail (includes items) |
-| POST | `/outfits` | Create |
-| PUT | `/outfits/{id}` | Update |
-| DELETE | `/outfits/{id}` | Delete (does not touch wear_log) |
-| POST | `/outfits/{id}/items` | Add clothing; body: `{ clothingId, sortOrder }` |
-| PUT | `/outfits/{id}/items/reorder` | Reorder all items; body: `[{ clothingId, sortOrder }, ...]` |
-| DELETE | `/outfits/{id}/items/{clothingId}` | Remove clothing from outfit |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/outfits` | 列表，支持筛选 `season`、`occasion`、`favorite` |
+| GET | `/outfits/{id}` | 详情（含 items） |
+| POST | `/outfits` | 创建 |
+| PUT | `/outfits/{id}` | 更新 |
+| DELETE | `/outfits/{id}` | 删除（**不**影响 wear_log） |
+| POST | `/outfits/{id}/items` | 添加衣物到搭配；body：`{ clothingId, sortOrder }` |
+| PUT | `/outfits/{id}/items/reorder` | 整体重排；body：`[{ clothingId, sortOrder }, ...]` |
+| DELETE | `/outfits/{id}/items/{clothingId}` | 从搭配里移除该衣物 |
 
-### Calendar
+### 日历
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/calendar?from=YYYY-MM-DD&to=YYYY-MM-DD` | Entries in range |
-| GET | `/calendar/{id}` | Detail |
-| POST | `/calendar` | Create — triggers wear_log generation |
-| PUT | `/calendar/{id}` | Update — diffs items to adjust wear_log |
-| DELETE | `/calendar/{id}` | Delete — cascades wear_log for this entry |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/calendar?from=YYYY-MM-DD&to=YYYY-MM-DD` | 区间内所有条目 |
+| GET | `/calendar/{id}` | 详情 |
+| POST | `/calendar` | 创建 —— 触发 wear_log 自动生成 |
+| PUT | `/calendar/{id}` | 更新 —— diff items 调整 wear_log |
+| DELETE | `/calendar/{id}` | 删除 —— 级联删除该条目产生的 wear_log |
 
-### Wear log
+### 穿着流水
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/wear-logs` | Manual log: `{ clothingId, wornAt }` |
-| DELETE | `/wear-logs/{id}` | Remove a manual log |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| POST | `/wear-logs` | 手动补登；body：`{ clothingId, wornAt }` |
+| DELETE | `/wear-logs/{id}` | 删除一条手动记录 |
 
-### Images
+### 图片代理
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/images/{key}` | Backend streams from MinIO |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/images/{key}` | 后端从 MinIO 拉取并流式回写 |
 
-### Statistics
+### 统计
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/stats/overview` | Totals: clothing, outfits, this-month wears |
-| GET | `/stats/clothing/{id}` | Per-item: worn count, first/last worn, cost-per-wear |
-| GET | `/stats/most-worn?limit=10` | Top worn items |
-| GET | `/stats/least-worn?days=90` | Items not worn in 90 days |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/stats/overview` | 总览：衣物数、搭配数、本月穿着次数 |
+| GET | `/stats/clothing/{id}` | 单件：穿着次数、首次/最近穿着、cost-per-wear |
+| GET | `/stats/most-worn?limit=10` | 穿着次数最多的 TOP 10 |
+| GET | `/stats/least-worn?days=90` | N 天内没穿过的衣物（清理参考） |
 
-### Conventions
+### 通用约定
 
-- All responses wrapped in `{ code: 0|!0, data, message }`.
-- Errors throw a typed exception handled by `GlobalExceptionHandler` to produce the same envelope.
-- Pagination via `?page=1&size=20` returning `{ list, total, page, size }`.
-- OpenAPI spec published at `/v3/api-docs` for client codegen.
+- 所有响应包装成 `{ code: 0|!0, data, message }`。
+- 异常由 `GlobalExceptionHandler` 统一处理，输出同样的 envelope。
+- 分页参数 `?page=1&size=20`，响应 `{ list, total, page, size }`。
+- OpenAPI 规范挂在 `/v3/api-docs`，给前端做客户端代码生成。
 
-## 7. Key Flows
+## 7. 关键流程
 
-### Add clothing
+### 新增衣物
 
-1. User opens `clothing-form`, picks images from phone.
-2. Frontend uploads each image via `POST /clothing/{id}/images` after creating the clothing row first (or via draft pattern — TBD in plan phase).
-3. Frontend sets categories, tags, season, price, etc.
-4. Save → `POST /clothing` with metadata + image keys.
+1. 用户进 `clothing-form`，从相册选图。
+2. 先创建衣物拿到 id，再循环 `POST /clothing/{id}/images` 上传每张图（草稿模式待计划阶段细化）。
+3. 设置分类、标签、季节、价格等元数据。
+4. 提交 → `POST /clothing`（一次性写入元数据 + 图片 key）。
 
-### Compose outfit
+### 组搭配
 
-1. User opens `outfit-form`, picks clothing from list.
-2. Drag to reorder (sets `sort_order`).
-3. Pick cover image, fill name/occasion/season.
-4. Save → `POST /outfits` then `POST /outfits/{id}/items` per clothing.
+1. 用户进 `outfit-form`，从衣物列表里挑衣服。
+2. 拖拽调整顺序（写入 `sort_order`）。
+3. 选封面图、填名称 / 场合 / 季节。
+4. 保存 → `POST /outfits`，再循环 `POST /outfits/{id}/items` 添加每件衣物。
 
-### Plan calendar
+### 规划日历
 
-1. User opens `calendar` page, taps a date.
-2. Picks slot + outfit.
-3. Save → `POST /calendar` → backend writes wear_log for each outfit_item.
+1. 用户进 `calendar` 页，点某个日期。
+2. 选 slot + 搭配。
+3. 保存 → `POST /calendar` → 后端自动给 `outfit_item` 里每件衣物写一条 wear_log。
 
-### Share outfit
+### 分享搭配
 
-1. User opens outfit detail, taps "Share".
-2. Frontend renders `OutfitCanvas` to image via `<canvas>` `toDataURL`.
-3. Native share API (or WeChat `wx.shareAppMessage` on the MP).
+1. 用户在搭配详情页点「分享」。
+2. 前端用 `OutfitCanvas` 把搭配渲染到 `<canvas>`，调 `toDataURL` 出图。
+3. 调用系统分享 API（H5：`navigator.share`；微信小程序：`wx.shareAppMessage`）。
 
-## 8. Deployment
+## 8. 部署
 
-### Local dev
+### 本地开发
 
 ```bash
 cd deploy
-docker compose -f docker-compose.dev.yml up -d   # PG + MinIO
+docker compose -f docker-compose.dev.yml up -d   # 起 PG + MinIO
 cd ../backend
 ./mvnw spring-boot:run
-# in another shell
+# 另开一个 shell
 cd ../frontend
 npm install
-npm run dev:h5           # browser
-npm run dev:mp-weixin    # WeChat devtools
+npm run dev:h5           # 浏览器调试
+npm run dev:mp-weixin    # 微信开发者工具调试
 ```
 
-`docker-compose.dev.yml` exposes PG on `5432` and MinIO on `9000`/`9001` for direct local access.
+`docker-compose.dev.yml` 把 PG 暴露在 `5432`、MinIO 暴露在 `9000`（API）/ `9001`（控制台），方便本地直接连。
 
-### Production (self-hosted on user's PC)
+### 生产部署（自托管在用户自己的 PC）
 
-`deploy/docker-compose.yml` runs three services:
+`deploy/docker-compose.yml` 跑三个服务：
 
-- `postgres` (PostgreSQL 16-alpine) with named volume `pgdata` and init script `postgres/init.sql` mounted to `/docker-entrypoint-initdb.d/`.
-- `minio` (latest) with named volume `miniodata`, console on `:9001`, API on `:9000`.
-- `backend` (built from `backend/Dockerfile`) depending on both; exposed on `:8080`.
+- `postgres`：PostgreSQL 16-alpine，命名卷 `pgdata`，init 脚本 `postgres/init.sql` 挂到 `/docker-entrypoint-initdb.d/`。
+- `minio`：latest，命名卷 `miniodata`，控制台 `:9001`、API `:9000`。
+- `backend`：由 `backend/Dockerfile` 构建，依赖前两者，对外暴露 `:8080`。
 
-Environment variables (loaded from `.env`):
+`.env` 文件提供环境变量：
 
 ```
 DB_PASSWORD=...
@@ -382,51 +382,55 @@ MINIO_USER=...
 MINIO_PASSWORD=...
 ```
 
-### Networking
+### 网络
 
-- H5 access on local network: just `http://<pc-ip>:8080`. Frontend dev points at that.
-- WeChat Mini Program: requires a public HTTPS domain. For MVP, use **Cloudflare Tunnel** (`cloudflared`) to expose `localhost:8080` as `https://closet.example.com` without port-forwarding. Add the domain to WeChat MP's "server domain" whitelist.
+- **H5 在局域网内访问**：直接用 `http://<本机 IP>:8080`，前端开发连这个。
+- **微信小程序**：必须有公网 HTTPS 域名。推荐用 **Cloudflare Tunnel**（`cloudflared`）把 `localhost:8080` 暴露成 `https://closet.example.com`，不需要做端口映射。然后在微信公众平台的「服务器域名」里把这个域名加白。
 
-### Storage init
+### 存储初始化
 
-On first MinIO start, a one-shot init container creates the `closet-images` bucket. Implementation detail in plan phase.
+第一次启动 MinIO 时用一个一次性 init 容器创建 `closet-images` bucket。具体实现细节在计划阶段确定。
 
-### Backups
+### 备份
 
-**Out of scope for MVP.** Data sits in Docker named volumes. User can manually back up via `docker run --rm -v closet_pgdata:/data -v $PWD:/backup alpine tar czf /backup/pg-$(date +%F).tar.gz /data` if/when they want.
+**MVP 不做。** 数据放在 Docker 命名卷里。用户需要时手动备份：
 
-## 9. Testing
+```bash
+docker run --rm -v closet_pgdata:/data -v $PWD:/backup alpine tar czf /backup/pg-$(date +%F).tar.gz /data
+```
 
-### Backend
+## 9. 测试
 
-- **Unit:** service layer with JUnit 5 + Mockito. Target ≥ 80% line coverage on `service/`.
-- **Integration:** `@SpringBootTest` + Testcontainers spinning real PostgreSQL + MinIO. Cover all controllers end-to-end (mapper → service → controller).
-- **Test layout:** `src/test/java/com/closet/{unit,integration}`.
+### 后端
 
-### Frontend
+- **单元测试**：service 层，JUnit 5 + Mockito。`service/` 目录行覆盖率目标 ≥ 80%。
+- **集成测试**：`@SpringBootTest` + Testcontainers 起真实 PG 和 MinIO，跑全链路（mapper → service → controller）。
+- **测试目录**：`src/test/java/com/closet/{unit,integration}`。
 
-- **Component tests** for `ClothingCard`, `OutfitCanvas`, `ImageUploader`, `FilterBar`, `CategoryPicker`, `TagPicker` via Vitest + @vue/test-utils + happy-dom.
-- **API client** validated against the OpenAPI spec at build time (TypeScript types).
-- **E2E:** deferred. Will revisit after MVP ships.
+### 前端
+
+- **组件测试**：`ClothingCard`、`OutfitCanvas`、`ImageUploader`、`FilterBar`、`CategoryPicker`、`TagPicker` 用 Vitest + @vue/test-utils + happy-dom。
+- **API 客户端**：构建时用 OpenAPI 规范校验 TypeScript 类型。
+- **E2E**：暂不做，MVP 上线后再考虑。
 
 ### CI
 
-Out of scope for MVP. The user will run tests manually.
+MVP 不做 CI，用户本地手动跑测试。
 
-## 10. Open Questions / Future Work
+## 10. 开放问题 / 未来工作
 
-1. **Image processing pipeline** — should the backend auto-generate thumbnails on upload (saves bandwidth on the list view)? Not in MVP, but cheap to add with `thumbnailator`.
-2. **Multi-user later** — when expanding to friends / community, the schema needs `users` and an `owner_id` column on every table. Easy to retrofit since no rows exist yet.
-3. **AI tagging** — auto-detect category / color / season from image. Pluggable later as a service called from `ClothingService.create`.
-4. **Backup automation** — when the user feels data is valuable enough, add a cron / scheduled task.
-5. **H5 ↔ WeChat MP behavior parity** — test both targets; some uni-app APIs differ (image picker, share, login).
+1. **图片处理管线** —— 上传时是否后端自动生成缩略图（列表页能省流量）？MVP 不做，加 `thumbnailator` 很容易。
+2. **未来多用户** —— 扩展到好友/社区时，需要 `users` 表和每张业务表加 `owner_id`。现在还没数据，回填成本极低。
+3. **AI 打标签** —— 自动识别类别 / 颜色 / 季节。作为一个可插拔的服务挂在 `ClothingService.create` 里即可。
+4. **自动备份** —— 等用户觉得数据够值钱时再加 cron / 定时任务。
+5. **H5 ↔ 微信小程序行为差异** —— 两端都要测。uni-app 在选图、分享、登录这些 API 上有差异。
 
-## 11. Out-of-Scope Confirmation
+## 11. 明确推迟（MVP 不做）
 
-The following were considered and explicitly deferred:
+以下功能讨论过，本次明确不做：
 
-- PIN / password lock on app open.
-- Redis caching of images.
-- Cron-based automated backups.
-- Frontend E2E tests.
-- Multi-user / social features.
+- 打开 App 时的 PIN / 密码锁。
+- 图片的 Redis 缓存。
+- 基于 cron 的自动备份。
+- 前端 E2E 测试。
+- 多用户 / 社交功能。
