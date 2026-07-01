@@ -1,0 +1,52 @@
+ services:
+   postgres:
+     image: postgres:16-alpine
+     container_name: closet-pg-dev
+     environment:
+       POSTGRES_USER: closet
+       POSTGRES_PASSWORD: closet_dev
+       POSTGRES_DB: closet
+     ports:
+       - "5432:5432"
+     volumes:
+       - pgdata-dev:/var/lib/postgresql/data
+     healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U closet"]
+       interval: 5s
+       timeout: 3s
+       retries: 10
+ 
+   minio:
+     image: minio/minio:latest
+     container_name: closet-minio-dev
+     command: server /data --console-address ":9001"
+     environment:
+       MINIO_ROOT_USER: closet_dev
+       MINIO_ROOT_PASSWORD: closet_dev_secret
+     ports:
+       - "9000:9000"
+       - "9001:9001"
+     volumes:
+       - miniodata-dev:/data
+     healthcheck:
+       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+       interval: 5s
+       timeout: 3s
+       retries: 10
+ 
+   minio-init:
+     image: minio/mc:latest
+     depends_on:
+       minio:
+         condition: service_healthy
+     entrypoint: >
+       /bin/sh -c "
+       mc alias set local http://minio:9000 closet_dev closet_dev_secret &&
+       mc mb --ignore-existing local/closet-images &&
+       mc anonymous set download local/closet-images &&
+       echo 'bucket ready'
+       "
+ 
+ volumes:
+   pgdata-dev:
+   miniodata-dev:
