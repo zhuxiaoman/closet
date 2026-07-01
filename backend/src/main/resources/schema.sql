@@ -1,4 +1,4 @@
-﻿-- 衣物分类（支持两级）
+-- 衣物分类（支持两级）
 CREATE TABLE category (
     id          BIGSERIAL PRIMARY KEY,
     name        VARCHAR(64) NOT NULL,

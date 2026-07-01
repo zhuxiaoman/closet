@@ -1,4 +1,4 @@
-﻿INSERT INTO category (name, parent_id, sort_order) VALUES
+INSERT INTO category (name, parent_id, sort_order) VALUES
     ('上装', NULL, 0),
     ('下装', NULL, 1),
     ('外套', NULL, 2),

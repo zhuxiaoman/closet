@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/closet
+    username: closet
+    password: closet_dev
+minio:
+  endpoint: http://localhost:9000
+logging:
+  level:
+    com.closet: DEBUG
