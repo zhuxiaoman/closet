@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T8 已完成，T9 待开始
-> 最后提交：`829a96b`
+> 截止：T1-T9 已完成，T10 待开始
+> 最后提交：`d38e833`
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（11 个 commit，含 3 个 docs）
+### 已完成（12 个 commit，含 3 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -38,13 +38,14 @@
 | T6 | `3ea8146` | feat(storage): MinIO storage service（用本地 MinIO + TestPropertySource，详见踩坑 #8） |
 | T7 | `b981c3f` | feat(backend): MyBatis-Plus pagination and CORS config |
 | T8 | `829a96b` | feat(category): CRUD with MyBatis-Plus |
+| T9 | `d38e833` | feat(tag): CRUD with MyBatis-Plus |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
 
 ### 待办
 
-**下一步：T9**（Tag CRUD，沿用 T8 的 TDD 模板）
+**下一步：T10**（Clothing 实体 + Mapper + 元数据填充 + 图片多对多关系）
 
 后续 T8-T36 详见 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md`。计划里分 3 个阶段，本阶段（Phase 1）只差 T8-T13（后端 Category/Clothing CRUD + 图片上传/下载），完成后可以切到 Phase 2（搭配/日历等）。
 
@@ -202,13 +203,13 @@ Wegener、T2 Poincare 都卡在 `Start-Sleep -Seconds 30` 不返回。
 **直接做 T8**，按以下顺序：
 
 1. 读 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md` 里 T8 的完整规格
-2. Tag 比 Category 更简单（），按 TDD 顺序写测试 + 实现
+2. Clothing 比 Category/Tag 复杂：还含 image 列表 + 多对多关联（），按 TDD 顺序写测试 + 实现
 3. 完成后用 `mvn -o test` 跑测试验证
 4. commit
 
-**T9 提示**：
+**T10 提示**：
 - 用 `mvn` 不是 `./mvnw`
-- 实体类放 backend/src/main/java/com/closet/entity/Tag.java
+- 实体类放 backend/src/main/java/com/closet/entity/Clothing.java
 - Mapper 接口继承 `BaseMapper<Category>`（来自 `com.baomidou.mybatisplus.core.mapper`）
 - 注意 `schema.sql` 里 `category` 表的列名（`id`, `name`, `icon`, `sort_order`, `parent_id NULLABLE`, `created_at`, `updated_at`）
 - 默认 dev profile 跑全链路 IT 会连本地 PG（容器已起）；单元测试不需要 DB
