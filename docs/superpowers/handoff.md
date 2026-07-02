@@ -1,8 +1,8 @@
-# 电子衣橱 MVP 项目状态总结（Handoff）
+﻿# 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T4 已完成，T5 待开始
-> 最后提交：`0ec6ae7`
+> 截止：T1-T5 已完成，T6 待开始
+> 最后提交：`4b3f0e5`
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（4 个提交，8 个 commit 含 docs）
+### 已完成（5 个 commit，含 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -34,15 +34,18 @@
 | T2 | `3157e0e` | chore: docker compose for local dev (PG + MinIO) |
 | T3 | `bbcb1f5` | feat(db): schema and seed data for MVP |
 | T4 | `0ec6ae7` | feat(backend): spring boot project init with PG + MinIO deps |
+| T5 | `4b3f0e5` | feat(common): Result wrapper and global exception handler |
+| -    | `8b4072f` | docs: project handoff summary for session continuity |
 
 ### 待办
 
-**下一步：T5**（`feat(common): Result wrapper and global exception handler`）
-- 4 个 Java 文件 + 1 个测试
-- TDD：先写失败测试 → 写实现 → 测试通过 → commit
-- 路径：`backend/src/main/java/com/closet/common/` 和 `backend/src/test/java/com/closet/common/`
+**下一步：T6**（MinIO 配置与存储服务）
+- 配置 MinIO 客户端（endpoint、access-key、secret-key、bucket）
+- 实现 `MinioStorageService`（上传、下载、删除对象）
+- 单元测试
+- 路径：`backend/src/main/java/com/closet/config/MinioConfig.java` 和 `backend/src/main/java/com/closet/storage/MinioStorageService.java`
 
-后续 T6-T36 详见 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md`。
+后续 T7-T36 详见 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md`。
 
 ## 4. 工作目录与关键路径
 
@@ -51,7 +54,13 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 ├── backend/                                # Spring Boot 工程
 │   ├── pom.xml                             # Spring Boot 3.3.4 + Java 21
 │   ├── src/main/java/com/closet/
-│   │   └── ClosetApplication.java
+│   │   ├── ClosetApplication.java
+│   │   └── common/                         # T5 新增
+│   │       ├── Result.java
+│   │       ├── ApiException.java
+│   │       └── GlobalExceptionHandler.java
+│   ├── src/test/java/com/closet/common/
+│   │   └── ResultTest.java                 # T5 测试
 │   ├── src/main/resources/
 │   │   ├── application.yml                 # mode: always（见踩坑 #3）
 │   │   ├── application-dev.yml
@@ -61,11 +70,10 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 ├── deploy/
 │   └── docker-compose.dev.yml              # PG + MinIO + minio-init
 ├── docs/
-│   ├── superpowers/
-│   │   ├── specs/2026-07-01-digital-closet-design.md
-│   │   ├── plans/2026-07-01-digital-closet-mvp.md  # 36 个 Task 的实施计划
-│   │   └── handoff.md                      # 本文档
-│   └── README.md（暂未创建，计划放在仓库根）
+│   └── superpowers/
+│       ├── specs/2026-07-01-digital-closet-design.md
+│       ├── plans/2026-07-01-digital-closet-mvp.md  # 36 个 Task 的实施计划
+│       └── handoff.md                      # 本文档
 ├── .gitignore
 └── README.md
 ```
@@ -96,7 +104,7 @@ java -version   # 应显示 openjdk 21.0.11
 
 ### 计划里用 `./mvnw` 但项目还没装 Maven Wrapper
 
-**T5 及之后所有 mvn 命令用 `mvn`，不是 `./mvnw`**。
+**T6 及之后所有 mvn 命令用 `mvn`，不是 `./mvnw`**。
 
 ## 6. 已知问题和踩坑记录
 
@@ -123,7 +131,7 @@ T4 启动验证时，应用报 `ERROR: relation "category" already exists`。
 
 **当前 workaround**：每次重启应用前先 `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`。
 
-**长期方案**（T5+ 或部署前再处理）：
+**长期方案**（T6+ 或部署前再处理）：
 - 把 `mode: always` 改成 `mode: never`，靠手动初始化
 - 或者加 profile 区分（dev 用 always，prod 用 never）
 - 或者给 schema.sql 加 `IF NOT EXISTS`
@@ -144,6 +152,10 @@ T4 启动验证时，应用报 `ERROR: relation "category" already exists`。
 
 改 system 环境变量后，当前 Codex 进程内的子进程不会立即看到。需要重启 Codex。
 **当前状态**：用户已手动改好 system 环境变量并重启，PATH 已正常。
+
+### 坑 6：PowerShell 多行字符串替换复杂
+
+`-replace` 操作符处理带特殊字符（`(`, `)`, `[`, `]`, `*`, `?`, `` ` `` 等）的中文文本容易失败。处理多行内容时直接用 `Set-Content` 重写整个文件更可靠。
 
 ## 7. Subagent 派发模板
 
@@ -176,17 +188,17 @@ T4 启动验证时，应用报 `ERROR: relation "category" already exists`。
 
 ## 9. 下一步操作
 
-**直接做 T5**，按以下顺序：
+**直接做 T6**，按以下顺序：
 
-1. 读 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md` 里 T5 的完整规格
-2. 派 subagent 执行（带严格约束），或本地直接做（T5 涉及 4 个文件 + 测试，本地做也行）
-3. 完成后用 mvn 跑测试验证（`cd backend; mvn -Dtest=ResultTest test`）
+1. 读 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md` 里 T6 的完整规格
+2. 派 subagent 执行（带严格约束），或本地直接做
+3. 完成后用 mvn 跑测试验证
 4. commit
 
-**T5 提示**：
+**T6 提示**：
 - 用 `mvn` 不是 `./mvnw`
-- TDD：先写 `ResultTest.java`，跑测试看到编译错误，再写实现
-- 写完后跑 `mvn -Dtest=ResultTest test` 应该 2 个测试都 PASS
+- MinIO 端点：`http://localhost:9000`，bucket：`closet-images`，access-key：`closet_dev`，secret-key：`closet_dev_secret`
+- 容器已在运行（`closet-minio-dev` healthy, `closet-images` bucket 已建好）
 
 ## 10. 关键文件位置速查
 
@@ -199,4 +211,5 @@ T4 启动验证时，应用报 `ERROR: relation "category" already exists`。
 | Docker Compose | `deploy/docker-compose.dev.yml` |
 | Spring Boot 配置 | `backend/src/main/resources/application.yml` |
 | Maven 配置 | `backend/pom.xml` |
-
+| Result/ApiException/Handler | `backend/src/main/java/com/closet/common/` |
+| Result 测试 | `backend/src/test/java/com/closet/common/ResultTest.java` |
