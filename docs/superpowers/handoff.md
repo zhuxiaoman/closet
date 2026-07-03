@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T23 已完成，T24 待开始（Pinia stores + pages.json 路由）
-> 最后提交：`d0c92af`（T23）
+> 截止：T1-T24 已完成，T25 待开始（ClothingCard 组件 + Vitest）
+> 最后提交：`308184a`（T24）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（28 个 commit，含 5 个 docs）
+### 已完成（29 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -53,6 +53,7 @@
 | T21 | `412ce21` | feat(stats): T21 StatsController + 集成测试 |
 | T22 | `5030995` | feat(frontend): uni-app init with uView Plus + Vitest |
 | T23 | `d0c92af` | feat(frontend): OpenAPI client and API wrapper |
+| T24 | `308184a` | feat(frontend): pinia stores and routing |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -61,23 +62,22 @@
 
 ### 待办
 
-**当前：T24**（Pinia stores + pages.json 路由）
+**当前：T25**（ClothingCard 组件 + Vitest）
 
-T23 已完成：springdoc 验证 + openapi-typescript 生成 schema.d.ts（20.5KB）+ API 封装 7 namespace，commit `d0c92af`。
+T24 已完成：3 个 Pinia store + pages.json 扩展 10 路由，commit `308184a`。
 
-T24 任务（计划文档 §4 第 11 项，详见 2966-3020 行）：
-- src/stores/clothing.ts（Pinia setup store：list/total + fetchList）
-- src/stores/outfit.ts（同模式）
-- src/stores/calendar.ts（同模式）
-- src/pages.json：10 个路由（index / closet / clothing-form / clothing-detail / outfits / outfit-form / outfit-detail / calendar / stats / settings）
-- 提交信息：feat(frontend): pinia stores and routing（中文详细）
+T25 任务（计划文档 §4 第 12 项，详见 3025-3100 行）：
+- src/components/ClothingCard.test.ts（先写失败测试，2 个用例：renders name + image / placeholder fallback）
+- src/components/ClothingCard.vue（computed imgSrc：有 mainImageKey 走 /api/v1/images/...，否则 /static/placeholder.png）
+- 跑 npx vitest run src/components/ClothingCard.test.ts 全绿
+- 提交信息：feat(frontend): ClothingCard with image fallback（中文详细）
 
 注意：
-- 现有 pages.json 已经有 index 页（uni-app 模板自带），不要覆盖，改成扩展 pages 数组
-- 路由的 .vue 文件 T25-T28 才会真建，现在只是先在 pages.json 里登记路径
-- pinia 已通过 uview-plus 间接装好（检查 frontend/package.json），不需额外装
+- 先写测试，再写组件（TDD）
+- vitest config 还没建，npx vitest run 默认用 vitest 自动找测试文件
+- happy-dom 装好了，可以 mount Vue 组件
 
-后续 T25：ClothingCard 组件 + Vitest。T26：ImageUploader。T27：ClothingList。T28：ClothingForm。
+后续 T26：ImageUploader 组件 + Vitest。T27：ClothingList 组件。T28：ClothingForm 表单页。
 
 ## 4. 工作目录与关键路径
 
