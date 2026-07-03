@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T9 已完成，T10 待开始
-> 最后提交：`d38e833`
+> 截止：T1-T13 已完成，T14 待开始（Outfit + OutfitItem）
+> 最后提交：`385ed90`（T13）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（12 个 commit，含 3 个 docs）
+### 已完成（18 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -39,15 +39,36 @@
 | T7 | `b981c3f` | feat(backend): MyBatis-Plus pagination and CORS config |
 | T8 | `829a96b` | feat(category): CRUD with MyBatis-Plus |
 | T9 | `d38e833` | feat(tag): CRUD with MyBatis-Plus |
+| T10 | `282334d` | feat(clothing): Clothing 实体 + Mapper + 元数据填充器 |
+| T11 | `95f4293` | feat(clothing): ClothingService + DTO + 11 个单元测试 |
+| T12 | `dde51fd` | feat(clothing): ClothingController + IT（4 个集成测试） |
+| T13 | `385ed90` | feat(clothing): 图片上传/下载（ClothingImage + ImageController + IT） |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
+| -    | `e08c749` | docs: update handoff with T8 completion |
+| -    | `ccf141e` | docs: update handoff with T9 completion |
 
 ### 待办
 
-**下一步：T10**（Clothing 实体 + Mapper + 元数据填充 + 图片多对多关系）
+**当前：T14**（Outfit + OutfitItem 实体 + Mapper）
 
-后续 T8-T36 详见 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md`。计划里分 3 个阶段，本阶段（Phase 1）只差 T8-T13（后端 Category/Clothing CRUD + 图片上传/下载），完成后可以切到 Phase 2（搭配/日历等）。
+T11 + T12 + T13 已完成：
+- ClothingService + DTO + 11 单元测试 / ClothingController + 4 IT 全绿
+- ClothingImage 实体/Mapper/Service + ImageController 代理 + ClothingController 加图片端点 + 2 IT 全绿
+- 顺手让 schema.sql + data.sql 全部幂等（CREATE TABLE IF NOT EXISTS / DO ... / ON CONFLICT DO NOTHING），不再需要重启前 DROP SCHEMA
+
+T14 任务（计划文档 §4 第 1 项）：
+- entity/Outfit.java（映射 outfit 表：name / description / occasion / season / isFavorite / coverImageId / 时间戳）
+- entity/OutfitItem.java（outfit_item 复合主键表：outfitId / clothingId / sortOrder）
+- mapper/OutfitMapper.java + mapper/OutfitItemMapper.java（各自 extends BaseMapper<...>）
+- mvn compile 验证
+- 提交信息：feat(outfit): entity and mappers
+- 勾掉计划文档 T14 的 4 个 checkbox
+
+后续 T15-T16：Service（含重排）+ Controller。T17 起进入 WearLog 域。
+
+后续 T14-T36 详见 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md`。计划里分 3 个阶段，本阶段（Phase 1 后端 CRUD）到 T16 完结，进入 Phase 2（搭配/日历等）。
 
 ## 4. 工作目录与关键路径
 
