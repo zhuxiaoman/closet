@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T22 已完成，T23 待开始（OpenAPI 客户端生成）
-> 最后提交：`5030995`（T22）
+> 截止：T1-T23 已完成，T24 待开始（Pinia stores + pages.json 路由）
+> 最后提交：`d0c92af`（T23）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（27 个 commit，含 5 个 docs）
+### 已完成（28 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -52,6 +52,7 @@
 | T20 | `8ff5d67` | feat(stats): T20 StatsService + DTO + 单测 |
 | T21 | `412ce21` | feat(stats): T21 StatsController + 集成测试 |
 | T22 | `5030995` | feat(frontend): uni-app init with uView Plus + Vitest |
+| T23 | `d0c92af` | feat(frontend): OpenAPI client and API wrapper |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -60,20 +61,23 @@
 
 ### 待办
 
-**当前：T23**（OpenAPI 客户端生成 + request 封装）
+**当前：T24**（Pinia stores + pages.json 路由）
 
-T22 已完成：uni-app 初始化（degit + npm install 1078 包 + uview-plus + 代理配置），commit `5030995`。
+T23 已完成：springdoc 验证 + openapi-typescript 生成 schema.d.ts（20.5KB）+ API 封装 7 namespace，commit `d0c92af`。
 
-T23 任务（计划文档 §4 第 10 项）：
-- 后端需 `springdoc-openapi-starter-webmvc-ui` 依赖；可能需要给后端加 swagger/starter（如果还没加）+ 启动验证 /v3/api-docs 返回 JSON
-- frontend 安装：`npm install -D openapi-typescript`
-- `npx openapi-typescript http://localhost:8080/v3/api-docs --output src/api/schema.d.ts` 生成 TS 类型
-- 写 src/api/index.ts（按 spec 模板：request<T> 包装 + api.clothing / api.outfit / api.calendar / api.stats 4 个 namespace）
-- 提交信息：feat(frontend): OpenAPI client and API wrapper（中文详细）
+T24 任务（计划文档 §4 第 11 项，详见 2966-3020 行）：
+- src/stores/clothing.ts（Pinia setup store：list/total + fetchList）
+- src/stores/outfit.ts（同模式）
+- src/stores/calendar.ts（同模式）
+- src/pages.json：10 个路由（index / closet / clothing-form / clothing-detail / outfits / outfit-form / outfit-detail / calendar / stats / settings）
+- 提交信息：feat(frontend): pinia stores and routing（中文详细）
 
-**踩坑提示**：PowerShell 下 `git commit -m "/api"` 会把 /api 当成 git path 报错。务必用 `git commit -F <msg-file>` 从文件读 message。
+注意：
+- 现有 pages.json 已经有 index 页（uni-app 模板自带），不要覆盖，改成扩展 pages 数组
+- 路由的 .vue 文件 T25-T28 才会真建，现在只是先在 pages.json 里登记路径
+- pinia 已通过 uview-plus 间接装好（检查 frontend/package.json），不需额外装
 
-后续 T24：Pinia stores + pages.json 路由配置。T25 起进入前端 CRUD 页面。
+后续 T25：ClothingCard 组件 + Vitest。T26：ImageUploader。T27：ClothingList。T28：ClothingForm。
 
 ## 4. 工作目录与关键路径
 
