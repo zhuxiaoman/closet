@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T14 已完成，T15 待开始（OutfitService + 重排 + 单元测试）
-> 最后提交：`122280d`（T14）
+> 截止：T1-T15 已完成，T16 待开始（OutfitController + IT）
+> 最后提交：`786cdf8`（T15）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（19 个 commit，含 5 个 docs）
+### 已完成（20 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -44,6 +44,7 @@
 | T12 | `dde51fd` | feat(clothing): ClothingController + IT（4 个集成测试） |
 | T13 | `385ed90` | feat(clothing): 图片上传/下载（ClothingImage + ImageController + IT） |
 | T14 | `122280d` | feat(outfit): entity and mappers |
+| T15 | `786cdf8` | feat(outfit): T15 OutfitService + DTO + 8 个 Mockito 单测 |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -52,24 +53,25 @@
 
 ### 待办
 
-**当前：T15**（OutfitService + 重排 + 单元测试）
+**当前：T16**（OutfitController + 集成测试）
 
-T14 已完成：Outfit + OutfitItem 实体 + 两个 mapper，`mvn -o compile` 通过（43 个源文件 5.9s）。
+T15 已完成：OutfitService + DTO + 11/11 Mockito 单测全绿 13.9s，commit `786cdf8`。
 
-T15 任务（计划文档 §4 第 2 项，详见 2158-2276 行）：
-- dto/OutfitRequest.java（name/description/occasion/season/isFavorite/coverImageId/clothingIds: List<Long>）
-- dto/OutfitResponse.java（含 items: List<Clothing>）
-- service/OutfitService.java 接口（page / get / create / update / delete / addItem / removeItem / reorderItems）
-- service/impl/OutfitServiceImpl.java
-  - create: 插 outfit + 关联 outfit_item（按数组顺序设 sortOrder）
-  - update: 整组替换 outfit_item（先删后插）
-  - reorderItems: 用 QueryWrapper.eq(outfit_id).eq(clothing_id) 条件更新 sort_order
-  - delete: outfitMapper.deleteById（calendar_entry FK ON DELETE RESTRICT，调用方负责）
-- test/unit/OutfitServiceTest.java（~8-10 个 Mockito 用例：create / update / addItem / removeItem / reorder）
-- 提交信息：feat(outfit): service with create, items, reorder
-- 跑 mvn -o -Dtest=OutfitServiceTest test 验证
+T16 任务（计划文档 §4 第 3 项）：
+- controller/OutfitController.java：
+  - GET /api/v1/outfits（分页 + season/occasion/favorite 过滤）
+  - GET /api/v1/outfits/{id}（含 items 列表）
+  - POST /api/v1/outfits（建搭配）
+  - PUT /api/v1/outfits/{id}（更新 + 整组替换 items）
+  - DELETE /api/v1/outfits/{id}（走 service.delete）
+  - POST /api/v1/outfits/{id}/items（加单件）
+  - DELETE /api/v1/outfits/{id}/items/{clothingId}（移单件）
+  - PUT /api/v1/outfits/{id}/items/reorder（批量改 sortOrder）
+- integration/OutfitControllerIT.java：连本地 PG（容器在跑），用 MockMvc 或 TestRestTemplate 跑全链路（参考 ClothingControllerIT）
+- 提交信息：feat(outfit): T16 OutfitController + 集成测试
+- 跑 mvn -o verify -Dtest=OutfitControllerIT 验证
 
-后续 T16：OutfitController + IT。T17 起进入 WearLog 域。
+后续 T17：WearLog 域开始。T17-T20 串起穿着记录 CRUD + 触发 outfits/wear_log 关联。
 
 ## 4. 工作目录与关键路径
 
