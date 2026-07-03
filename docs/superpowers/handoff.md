@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T15 已完成，T16 待开始（OutfitController + IT）
-> 最后提交：`786cdf8`（T15）
+> 截止：T1-T16 已完成，T17 待开始（WearLog 实体 + Mapper + 手动补登 Controller + IT）
+> 最后提交：`5b820b7`（T16）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（20 个 commit，含 5 个 docs）
+### 已完成（21 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -45,6 +45,7 @@
 | T13 | `385ed90` | feat(clothing): 图片上传/下载（ClothingImage + ImageController + IT） |
 | T14 | `122280d` | feat(outfit): entity and mappers |
 | T15 | `786cdf8` | feat(outfit): T15 OutfitService + DTO + 8 个 Mockito 单测 |
+| T16 | `5b820b7` | feat(outfit): T16 OutfitController + 集成测试 |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -53,25 +54,21 @@
 
 ### 待办
 
-**当前：T16**（OutfitController + 集成测试）
+**当前：T17**（WearLog 实体 + Mapper + 手动补登 Controller + IT）
 
-T15 已完成：OutfitService + DTO + 11/11 Mockito 单测全绿 13.9s，commit `786cdf8`。
+T16 已完成：OutfitController 8 端点 + 5/5 IT 全绿（mvn ~12s），commit `5b820b7`。
 
-T16 任务（计划文档 §4 第 3 项）：
-- controller/OutfitController.java：
-  - GET /api/v1/outfits（分页 + season/occasion/favorite 过滤）
-  - GET /api/v1/outfits/{id}（含 items 列表）
-  - POST /api/v1/outfits（建搭配）
-  - PUT /api/v1/outfits/{id}（更新 + 整组替换 items）
-  - DELETE /api/v1/outfits/{id}（走 service.delete）
-  - POST /api/v1/outfits/{id}/items（加单件）
-  - DELETE /api/v1/outfits/{id}/items/{clothingId}（移单件）
-  - PUT /api/v1/outfits/{id}/items/reorder（批量改 sortOrder）
-- integration/OutfitControllerIT.java：连本地 PG（容器在跑），用 MockMvc 或 TestRestTemplate 跑全链路（参考 ClothingControllerIT）
-- 提交信息：feat(outfit): T16 OutfitController + 集成测试
-- 跑 mvn -o verify -Dtest=OutfitControllerIT 验证
+T17 任务（计划文档 §4 第 4 项，详见 2354-2420 行）：
+- entity/WearLog.java：id / clothingId（FK） / calendarEntryId（FK，可空） / wornAt（LocalDate） / createdAt（INSERT fill）
+- mapper/WearLogMapper.java（extends BaseMapper<WearLog>）
+- controller/WearLogController.java：
+  - POST /api/v1/wear-logs（手补登：body 含 clothingId + wornAt；clothing 不存在返 404）
+  - DELETE /api/v1/wear-logs/{id}
+- integration/WearLogControllerIT.java：建 clothing → POST wear-log → DELETE
+- 提交信息：feat(wear-log): T17 手动补登端点（中文详细）
+- 跑 mvn -o -Dtest=WearLogControllerIT test 验证
 
-后续 T17：WearLog 域开始。T17-T20 串起穿着记录 CRUD + 触发 outfits/wear_log 关联。
+后续 T18：CalendarEntry 实体 + WearLogSyncService（出 outfit 同步生成 wear_log）。T19：CalendarService + Controller + IT。
 
 ## 4. 工作目录与关键路径
 
