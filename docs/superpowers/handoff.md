@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T13 已完成，T14 待开始（Outfit + OutfitItem）
-> 最后提交：`385ed90`（T13）
+> 截止：T1-T14 已完成，T15 待开始（OutfitService + 重排 + 单元测试）
+> 最后提交：`122280d`（T14）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（18 个 commit，含 5 个 docs）
+### 已完成（19 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -43,6 +43,7 @@
 | T11 | `95f4293` | feat(clothing): ClothingService + DTO + 11 个单元测试 |
 | T12 | `dde51fd` | feat(clothing): ClothingController + IT（4 个集成测试） |
 | T13 | `385ed90` | feat(clothing): 图片上传/下载（ClothingImage + ImageController + IT） |
+| T14 | `122280d` | feat(outfit): entity and mappers |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -51,24 +52,24 @@
 
 ### 待办
 
-**当前：T14**（Outfit + OutfitItem 实体 + Mapper）
+**当前：T15**（OutfitService + 重排 + 单元测试）
 
-T11 + T12 + T13 已完成：
-- ClothingService + DTO + 11 单元测试 / ClothingController + 4 IT 全绿
-- ClothingImage 实体/Mapper/Service + ImageController 代理 + ClothingController 加图片端点 + 2 IT 全绿
-- 顺手让 schema.sql + data.sql 全部幂等（CREATE TABLE IF NOT EXISTS / DO ... / ON CONFLICT DO NOTHING），不再需要重启前 DROP SCHEMA
+T14 已完成：Outfit + OutfitItem 实体 + 两个 mapper，`mvn -o compile` 通过（43 个源文件 5.9s）。
 
-T14 任务（计划文档 §4 第 1 项）：
-- entity/Outfit.java（映射 outfit 表：name / description / occasion / season / isFavorite / coverImageId / 时间戳）
-- entity/OutfitItem.java（outfit_item 复合主键表：outfitId / clothingId / sortOrder）
-- mapper/OutfitMapper.java + mapper/OutfitItemMapper.java（各自 extends BaseMapper<...>）
-- mvn compile 验证
-- 提交信息：feat(outfit): entity and mappers
-- 勾掉计划文档 T14 的 4 个 checkbox
+T15 任务（计划文档 §4 第 2 项，详见 2158-2276 行）：
+- dto/OutfitRequest.java（name/description/occasion/season/isFavorite/coverImageId/clothingIds: List<Long>）
+- dto/OutfitResponse.java（含 items: List<Clothing>）
+- service/OutfitService.java 接口（page / get / create / update / delete / addItem / removeItem / reorderItems）
+- service/impl/OutfitServiceImpl.java
+  - create: 插 outfit + 关联 outfit_item（按数组顺序设 sortOrder）
+  - update: 整组替换 outfit_item（先删后插）
+  - reorderItems: 用 QueryWrapper.eq(outfit_id).eq(clothing_id) 条件更新 sort_order
+  - delete: outfitMapper.deleteById（calendar_entry FK ON DELETE RESTRICT，调用方负责）
+- test/unit/OutfitServiceTest.java（~8-10 个 Mockito 用例：create / update / addItem / removeItem / reorder）
+- 提交信息：feat(outfit): service with create, items, reorder
+- 跑 mvn -o -Dtest=OutfitServiceTest test 验证
 
-后续 T15-T16：Service（含重排）+ Controller。T17 起进入 WearLog 域。
-
-后续 T14-T36 详见 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md`。计划里分 3 个阶段，本阶段（Phase 1 后端 CRUD）到 T16 完结，进入 Phase 2（搭配/日历等）。
+后续 T16：OutfitController + IT。T17 起进入 WearLog 域。
 
 ## 4. 工作目录与关键路径
 
