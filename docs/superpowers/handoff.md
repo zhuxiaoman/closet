@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T17 已完成，T18 待开始（CalendarEntry 实体 + WearLogSyncService + CalendarService）
-> 最后提交：`a4057fd`（T17）
+> 截止：T1-T18 已完成，T19 待开始（CalendarController + IT）
+> 最后提交：`ee19c54`（T18）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（22 个 commit，含 5 个 docs）
+### 已完成（23 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -47,6 +47,7 @@
 | T15 | `786cdf8` | feat(outfit): T15 OutfitService + DTO + 8 个 Mockito 单测 |
 | T16 | `5b820b7` | feat(outfit): T16 OutfitController + 集成测试 |
 | T17 | `a4057fd` | feat(wear-log): T17 手动补登端点 |
+| T18 | `ee19c54` | feat(calendar): T18 CalendarEntry 实体 + WearLogSyncService + CalendarService |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -55,26 +56,22 @@
 
 ### 待办
 
-**当前：T18**（CalendarEntry 实体 + WearLogSyncService + CalendarService + 单测）
+**当前：T19**（CalendarController + IT）
 
-T17 已完成：WearLog 实体/Mapper/Controller + 3/3 IT 全绿 12.2s，commit `a4057fd`。
+T18 已完成：CalendarEntry + WearLogSyncService + CalendarService + 3/3 单测全绿 9.3s，commit `ee19c54`。
 
-T18 任务（计划文档 §4 第 5 项，详见 2422-2540 行）：
-- entity/CalendarEntry.java：id / entryDate（LocalDate） / slot / outfitId（FK） / notes / createdAt / updatedAt
-- mapper/CalendarEntryMapper.java（extends BaseMapper<CalendarEntry>）
-- service/WearLogSyncService.java 接口：
-  - generateForEntry(entry) — 根据 outfit 关联的 clothing 逐件写一条 wear_log（先 deleteForEntry 清旧）
-  - deleteForEntry(calendarEntryId) — 删该 entry 产生的所有 wear_log
-- service/impl/WearLogSyncServiceImpl.java：注入 OutfitItemMapper + WearLogMapper，用 @Transactional
-- service/CalendarService.java 接口：range(from,to) / get(id) / create / update / delete
-- service/impl/CalendarServiceImpl.java：注入 CalendarEntryMapper + WearLogSyncService
-  - create / update：保存后调 syncService.generateForEntry(entry)
-  - delete：先 syncService.deleteForEntry(id)，再 deleteById
-- test/unit/WearLogSyncServiceTest.java（2 个 Mockito 用例即可）
-- 提交信息：feat(calendar): T18 CalendarEntry 实体 + WearLogSyncService + CalendarService（中文详细）
-- 跑 mvn -o -Dtest=WearLogSyncServiceTest test 验证
+T19 任务（计划文档 §4 第 6 项，详见 2595-2640 行）：
+- controller/CalendarController.java（5 端点）：
+  - GET /api/v1/calendar?from&to（范围查询，@DateTimeFormat ISO.DATE）
+  - GET /api/v1/calendar/{id}
+  - POST /api/v1/calendar（创建，触发 sync.generateForEntry）
+  - PUT /api/v1/calendar/{id}（更新 + 重生 wear_log）
+  - DELETE /api/v1/calendar/{id}（先 sync.deleteForEntry 再 delete）
+- integration/CalendarControllerIT.java：建 outfit+clothing → POST calendar → GET range 验证 wear_log 副作用 → PUT → DELETE
+- 提交信息：feat(calendar): T19 CalendarController + 集成测试（中文详细）
+- 跑 mvn -o -Dtest=CalendarControllerIT test 验证
 
-后续 T19：CalendarController + IT（CRUD + range 端点 + 同步触发验证）。
+后续 T20：StatsService（统计 DTO + service + 单测）。T21 起 Phase 6 完成进 Phase 7。
 
 ## 4. 工作目录与关键路径
 
