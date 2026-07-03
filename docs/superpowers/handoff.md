@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T20 已完成，T21 待开始（StatsController + IT）
-> 最后提交：`8ff5d67`（T20）
+> 截止：T1-T21 已完成，T22 待开始（uni-app 项目初始化）
+> 最后提交：`412ce21`（T21）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（25 个 commit，含 5 个 docs）
+### 已完成（26 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -50,6 +50,7 @@
 | T18 | `ee19c54` | feat(calendar): T18 CalendarEntry 实体 + WearLogSyncService + CalendarService |
 | T19 | `7982e5e` | feat(calendar): T19 CalendarController + 集成测试 |
 | T20 | `8ff5d67` | feat(stats): T20 StatsService + DTO + 单测 |
+| T21 | `412ce21` | feat(stats): T21 StatsController + 集成测试 |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -58,21 +59,26 @@
 
 ### 待办
 
-**当前：T21**（StatsController + IT）
+**当前：T22**（uni-app Vue 3 + TS + Vite 项目初始化 + uView Plus）
 
-T20 已完成：StatsService + DTO + 7/7 单测全绿 19.6s，commit `8ff5d67`。
+T21 已完成：StatsController 4 端点 + 3/3 IT 全绿 15.9s，commit `412ce21`。
 
-T21 任务（计划文档 §4 第 8 项）：
-- controller/StatsController.java（4 端点）：
-  - GET /api/v1/stats/overview
-  - GET /api/v1/stats/clothing/{id}
-  - GET /api/v1/stats/most-worn?limit=10（默认 10）
-  - GET /api/v1/stats/least-worn?days=90（默认 90）
-- integration/StatsControllerIT.java：建 clothing+wear_log → GET overview 验证 monthWears >= 1
-- 提交信息：feat(stats): T21 StatsController + 集成测试（中文详细）
-- 跑 mvn -o -Dtest=StatsControllerIT test 验证
+T22 任务（计划文档 §4 第 9 项，详见 2810-2880 行）：
+- npx degit dcloudio/uni-preset-vue#vite-ts frontend（创建项目骨架）
+- npm install（基础依赖）
+- npm install -D uview-plus vitest @vue/test-utils happy-dom jsdom
+- main.ts 引入 uview-plus（按 uview-plus 官方文档）
+- App.vue <style> 加 @import "uview-plus/index.scss"
+- vite.config.ts 加 /api → http://localhost:8080 代理
+- npm run dev:h5 启动验证（可选，文档里说 `npm install` 成功即可）
+- 提交信息：feat(frontend): uni-app init with uView Plus + Vitest
 
-后续 T22：OutfitExportService（搭配导出 + IT）。T23 起 Phase 7 进入导出 / 前端初始化。
+注意：
+- Windows 上 npx degit 可能要求 git（应该已装）
+- npm install 首次较慢（~2-3 min），可接受
+- 不要 commit node_modules（.gitignore 已默认排除）
+
+后续 T23：OpenAPI 客户端生成（src/api/schema.d.ts + request 封装）。T24：Pinia stores + pages.json 路由。
 
 ## 4. 工作目录与关键路径
 
