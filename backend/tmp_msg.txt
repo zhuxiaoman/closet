@@ -1,0 +1,6 @@
+feat(frontend): pinia stores and routing
+
+- 新增 src/stores/clothing.ts（Pinia setup store：list / total / loading + fetchList / get / create / update / remove）
+- 新增 src/stores/outfit.ts（同模式 + addItem / removeItem / reorderItems）
+- 新增 src/stores/calendar.ts（同模式 + range(from, to)）
+- 扩展 src/pages.json：保留原 index 页 + 新增 9 个路由（closet / clothing-form / clothing-detail / outfits / outfit-form / outfit-detail / calendar / stats / settings），globalStyle 保留

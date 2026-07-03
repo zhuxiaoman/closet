@@ -5,6 +5,60 @@
 			"style": {
 				"navigationBarTitleText": "uni-app"
 			}
+		},
+		{
+			"path": "pages/closet/index",
+			"style": {
+				"navigationBarTitleText": "衣橱"
+			}
+		},
+		{
+			"path": "pages/clothing-form/index",
+			"style": {
+				"navigationBarTitleText": "编辑衣物"
+			}
+		},
+		{
+			"path": "pages/clothing-detail/index",
+			"style": {
+				"navigationBarTitleText": "衣物详情"
+			}
+		},
+		{
+			"path": "pages/outfits/index",
+			"style": {
+				"navigationBarTitleText": "搭配"
+			}
+		},
+		{
+			"path": "pages/outfit-form/index",
+			"style": {
+				"navigationBarTitleText": "编辑搭配"
+			}
+		},
+		{
+			"path": "pages/outfit-detail/index",
+			"style": {
+				"navigationBarTitleText": "搭配详情"
+			}
+		},
+		{
+			"path": "pages/calendar/index",
+			"style": {
+				"navigationBarTitleText": "日历"
+			}
+		},
+		{
+			"path": "pages/stats/index",
+			"style": {
+				"navigationBarTitleText": "统计"
+			}
+		},
+		{
+			"path": "pages/settings/index",
+			"style": {
+				"navigationBarTitleText": "设置"
+			}
 		}
 	],
 	"globalStyle": {
