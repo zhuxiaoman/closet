@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T18 已完成，T19 待开始（CalendarController + IT）
-> 最后提交：`ee19c54`（T18）
+> 截止：T1-T19 已完成，T20 待开始（StatsService + DTO + 单测）
+> 最后提交：`7982e5e`（T19）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（23 个 commit，含 5 个 docs）
+### 已完成（24 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -48,6 +48,7 @@
 | T16 | `5b820b7` | feat(outfit): T16 OutfitController + 集成测试 |
 | T17 | `a4057fd` | feat(wear-log): T17 手动补登端点 |
 | T18 | `ee19c54` | feat(calendar): T18 CalendarEntry 实体 + WearLogSyncService + CalendarService |
+| T19 | `7982e5e` | feat(calendar): T19 CalendarController + 集成测试 |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -56,22 +57,24 @@
 
 ### 待办
 
-**当前：T19**（CalendarController + IT）
+**当前：T20**（StatsService + DTO + 单测）
 
-T18 已完成：CalendarEntry + WearLogSyncService + CalendarService + 3/3 单测全绿 9.3s，commit `ee19c54`。
+T19 已完成：CalendarController 5 端点 + 3/3 IT 全绿 25.4s，commit `7982e5e`。
 
-T19 任务（计划文档 §4 第 6 项，详见 2595-2640 行）：
-- controller/CalendarController.java（5 端点）：
-  - GET /api/v1/calendar?from&to（范围查询，@DateTimeFormat ISO.DATE）
-  - GET /api/v1/calendar/{id}
-  - POST /api/v1/calendar（创建，触发 sync.generateForEntry）
-  - PUT /api/v1/calendar/{id}（更新 + 重生 wear_log）
-  - DELETE /api/v1/calendar/{id}（先 sync.deleteForEntry 再 delete）
-- integration/CalendarControllerIT.java：建 outfit+clothing → POST calendar → GET range 验证 wear_log 副作用 → PUT → DELETE
-- 提交信息：feat(calendar): T19 CalendarController + 集成测试（中文详细）
-- 跑 mvn -o -Dtest=CalendarControllerIT test 验证
+T20 任务（计划文档 §4 第 7 项，详见 2646-2770 行）：
+- dto/StatsOverview.java：totalClothing / totalOutfits / monthWears
+- dto/ClothingStat.java：clothingId / name / wearCount / firstWorn / lastWorn / costPerWear
+- service/StatsService.java 接口：overview / forClothing / mostWorn(limit) / leastWorn(days)
+- service/impl/StatsServiceImpl.java：注入 ClothingMapper + OutfitMapper + WearLogMapper
+  - overview：selectCount + 本月 wear_log 计数
+  - forClothing：selectById + buildStat（含 costPerWear = price/wearCount）
+  - mostWorn：selectMaps group by clothing_id order by cnt desc limit
+  - leastWorn：找 status=active 且 cutoff 之后没 wear_log 的 clothing
+- test/unit/StatsServiceTest.java：~3-4 个 Mockito 用例
+- 提交信息：feat(stats): T20 StatsService + DTO + 单测（中文详细）
+- 跑 mvn -o -Dtest=StatsServiceTest test 验证
 
-后续 T20：StatsService（统计 DTO + service + 单测）。T21 起 Phase 6 完成进 Phase 7。
+后续 T21：StatsController + IT（4 端点）。T22 起 Phase 6 收尾。
 
 ## 4. 工作目录与关键路径
 
