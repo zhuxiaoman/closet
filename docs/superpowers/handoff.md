@@ -1,7 +1,7 @@
 ﻿# 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 状态：T1-T28 已完成，T29 待开始（pages/index/index.vue 首页 + Vitest）
+> 状态：T1-T29 已完成，T30 待开始（衣橱列表 + 衣物详情 + 衣物表单 + Vitest）
 > 最后提交：`33e209d`（T28）
 
 ## 1. 项目概述
@@ -68,25 +68,24 @@
 
 ### 待办
 
-**当前：T29**：pages/index/index.vue 首页（统计概览 + Vitest，与 plan T29 对齐）
+**当前：T30**：衣橱列表 + 衣物详情 + 表单（3 个 page + Vitest）
 
-T28 刚完成：
+T29 刚完成：
 - `frontend/src/components/OutfitCanvas.vue`：按 sortOrder 升序显示 tile 网格（image + name）；缺失 mainImageKey 用 `/static/placeholder.png` 占位；空 items 显示提示
-- 6/6 Vitest 全过（render / sort / default 0 / reactive update / empty / placeholder）
-- T27+T28 总计 27/27 全绿
+- 5/5 Vitest 全过（mount 默认值 / mock 数据渲染 / 错误降级 / closet 跳转 / calendar 跳转）
+- T25-T29 总计 32/32 全绿
 
-T29 任务（plan 第 4 节 T29）：
+T30 任务（plan T30，按用户指示已派 4 个 worker 并行）：
 - `frontend/src/pages/index/index.vue`：调用 `api.stats.overview()` 拉统计（衣物数 / 搭配数 / 本月穿次数），三张 up-card 展示；两个 up-button 跳到 `/pages/closet/index` 和 `/pages/calendar/index`
 - 3 个 Vitest 用例：mount 后 stats 默认 0/0/0、`api.stats.overview` mock 返回正确数字能正确显示、按钮点击触发 `uni.navigateTo`（需要在 setup file 或测试里 stub `uni.navigateTo`）
 - `pages.json` 已有首页路径（`pages/index/index`），无需改路由
-- 提交信息：`feat(frontend): home page with stats overview`
+- 提交信息：T30-T33 每个 page 一个 commit + handoff docs commit
 
-下一阶段：T29-T36
-- T29: pages/index/index.vue 首页（统计概览 + 跳转）
-- T30: pages/closet + pages/clothing-form + pages/clothing-detail
-- T31: pages/outfits + pages/outfit-form + pages/outfit-detail
-- T32: pages/calendar
-- T33: pages/stats + pages/settings
+下一阶段：T30-T33 page 工作（4 个 worker 并行） + T34-T36 部署
+- T30: pages/closet + pages/clothing-form + pages/clothing-detail（worker_T30）
+- T31: pages/outfits + pages/outfit-form + pages/outfit-detail（worker_T31）
+- T32: pages/calendar 日历页（worker_T32）
+- T33: pages/stats 统计页 + pages/settings 设置页（worker_T33）
 - T34-T36: 部署（Backend Dockerfile + 生产 compose + README + 烟测）
 
 ### 踩坑提示（重要，subagent 必须知道）
@@ -139,7 +138,7 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 │   │   │   ├── TagPicker.vue/.test.ts      # T27
 │   │   │   └── OutfitCanvas.vue/.test.ts   # T28
 │   │   ├── pages/                          # T29 起
-│   │   │   └── index/index.vue             # 占位 Hello，T29 替换
+│   │   │   └── index/index.vue             # T29 已完成（统计概览 + 跳转）
 │   │   ├── api/                            # schema.d.ts + index.ts
 │   │   └── stores/                         # pinia
 │   ├── vitest.config.ts
@@ -270,7 +269,7 @@ config.global.components['up-checkbox'] = upCheckboxStub;
 
 ## 9. 下一步操作
 
-**直接做 T29**：写 pages/index/index.vue + .test.ts，然后跑 vitest 验证，最后 code commit + docs commit。
+**并行派 4 个 worker 同时干 T30 / T31 / T32 / T33**（写不同 page 文件，互不冲突）。每个 worker 负责自己的 Task，完成后主会话验证 + commit。
 
 ## 10. 关键文件位置速查
 
@@ -295,3 +294,5 @@ config.global.components['up-checkbox'] = upCheckboxStub;
 | Frontend 页面 | `frontend/src/pages/` |
 | vitest setup | `frontend/vitest.setup.ts` |
 | vitest config | `frontend/vitest.config.ts` |
+
+
