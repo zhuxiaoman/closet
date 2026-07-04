@@ -1,8 +1,8 @@
 ﻿# 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 状态：T1-T27 已完成，T28 待开始（OutfitCanvas 搭配画布 + Vitest）
-> 最后提交：`fd03739`（T27）
+> 状态：T1-T28 已完成，T29 待开始（pages/index/index.vue 首页 + Vitest）
+> 最后提交：`33e209d`（T28）
 
 ## 1. 项目概述
 
@@ -16,7 +16,7 @@
 | 层 | 选型 |
 |---|---|
 | 前端 | uni-app（Vue 3 + TypeScript），uView Plus，Pinia，Vite |
-| 前端测试 | Vitest + @vue/test-utils（仅核心组件） |
+| 前端测试 | Vitest + @vue/test-utils（仅核心组件 + 页面） |
 | 后端 | Java 21 + Spring Boot 3.3.4 + MyBatis-Plus 3.5.5（见踩坑 #7） |
 | 后端测试 | JUnit 5 + Mockito + Testcontainers |
 | 数据库 | PostgreSQL 16 |
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（34 个 commit，含 6 个 docs）
+### 已完成（36 个 commit，含 7 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -57,28 +57,29 @@
 | T25 | `2fe8116` | feat(frontend): ClothingCard with image fallback |
 | T26 | `789a285` | feat(frontend): ImageUploader component |
 | T27 | `fd03739` | feat(frontend): FilterBar / CategoryPicker / TagPicker components |
+| T28 | `33e209d` | feat(frontend): OutfitCanvas with sort-by-order |
 | -   | `8b4072f` | docs: project handoff summary for session continuity |
 | -   | `b484530` | docs: update handoff with T5 completion |
 | -   | `3891081` | docs: update handoff with T6+T7 completion |
 | -   | `e08c749` | docs: update handoff with T8 completion |
 | -   | `ccf141e` | docs: update handoff with T9 completion |
-| -   | `6839fdf`/`a861a4c`/`6c45df6` | 越位的 ClothingForm + ClothingList（已合并到 `fd03739` 中删除，回归 plan 正确路径） |
+| -   | `0c1602b` | docs: update handoff with T27 completion |
+| -   | `6839fdf`/`a861a4c`/`6c45df6` | 越位的 ClothingForm + ClothingList（已在 `fd03739` 中删除） |
 
 ### 待办
 
-**当前：T28**：OutfitCanvas 搭配画布 + Vitest（plan 第 4 节 T28）
+**当前：T29**：pages/index/index.vue 首页（统计概览 + Vitest，与 plan T29 对齐）
 
-T27 刚完成：
-- `frontend/src/components/FilterBar.vue`：季节筛选（picker 第 0 项「全部」映射回 null，其余 spring/summer/fall/winter），picker @change 触发；emit change 时全量透传 ClothingFilter，避免后续加字段时丢字段
-- `frontend/src/components/CategoryPicker.vue` / `TagPicker.vue`：uView Plus up-checkbox-group 包装，v-model 双向同步 props.modelValue 与内部 selected，初始不 emit 避免重复回写
-- 21/21 Vitest 全绿（FilterBar 6 + CategoryPicker 5 + TagPicker 5 + ClothingCard 2 + ImageUploader 3）
-- `vitest.setup.ts`：picker 全局注册为 UniPicker；uView Plus 的 up-checkbox-group / up-checkbox 用 stub 全局注册（含 slot 渲染，见踩坑 #10）
-- 顺带删除越位的 ClothingList.vue / ClothingForm.vue + 它们的测试
+T28 刚完成：
+- `frontend/src/components/OutfitCanvas.vue`：按 sortOrder 升序显示 tile 网格（image + name）；缺失 mainImageKey 用 `/static/placeholder.png` 占位；空 items 显示提示
+- 6/6 Vitest 全过（render / sort / default 0 / reactive update / empty / placeholder）
+- T27+T28 总计 27/27 全绿
 
-T28 任务：
-- `frontend/src/components/OutfitCanvas.vue`：props `items: OutfitItem[]`，按 sortOrder 升序显示 tile 网格（image + name）；空 items 显示提示
-- `frontend/src/components/OutfitCanvas.test.ts`：渲染 N 个 tile、按 sortOrder 排序、缺失 sortOrder 视为 0、props 更新响应
-- 提交信息：`feat(frontend): OutfitCanvas with sort-by-order`
+T29 任务（plan 第 4 节 T29）：
+- `frontend/src/pages/index/index.vue`：调用 `api.stats.overview()` 拉统计（衣物数 / 搭配数 / 本月穿次数），三张 up-card 展示；两个 up-button 跳到 `/pages/closet/index` 和 `/pages/calendar/index`
+- 3 个 Vitest 用例：mount 后 stats 默认 0/0/0、`api.stats.overview` mock 返回正确数字能正确显示、按钮点击触发 `uni.navigateTo`（需要在 setup file 或测试里 stub `uni.navigateTo`）
+- `pages.json` 已有首页路径（`pages/index/index`），无需改路由
+- 提交信息：`feat(frontend): home page with stats overview`
 
 下一阶段：T29-T36
 - T29: pages/index/index.vue 首页（统计概览 + 跳转）
@@ -107,21 +108,20 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 │   ├── pom.xml                             # Spring Boot 3.3.4 + Java 21 + MyBatis-Plus 3.5.5
 │   ├── src/main/java/com/closet/
 │   │   ├── ClosetApplication.java
-│   │   ├── common/                         # T5 新增
+│   │   ├── common/                         # T5
 │   │   │   ├── Result.java
 │   │   │   ├── ApiException.java
 │   │   │   └── GlobalExceptionHandler.java
-│   │   ├── config/                         # T6 + T7 新增
-│   │   │   ├── MinioConfig.java            # MinioClient bean
-│   │   │   ├── MybatisPlusConfig.java      # 分页拦截器
-│   │   │   └── CorsConfig.java             # CORS
-│   │   └── storage/                        # T6 新增
-│   │       ├── StorageService.java         # 接口
-│   │       └── MinioStorageService.java    # 实现（NoSuchKey 静默吃掉）
+│   │   ├── config/                         # T6 + T7
+│   │   │   ├── MinioConfig.java
+│   │   │   ├── MybatisPlusConfig.java
+│   │   │   └── CorsConfig.java
+│   │   └── storage/                        # T6
+│   │       ├── StorageService.java
+│   │       └── MinioStorageService.java
 │   ├── src/test/java/com/closet/
-│   │   ├── common/ResultTest.java          # T5 测试（2 个）
-│   │   └── integration/
-│   │       └── MinioStorageServiceIT.java  # T6 测试（3 个，跑本地 MinIO + PG）
+│   │   ├── common/ResultTest.java
+│   │   └── integration/MinioStorageServiceIT.java
 │   └── src/main/resources/
 │       ├── application.yml                 # mode: always（见踩坑 #3）
 │       ├── application-dev.yml
@@ -136,8 +136,10 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 │   │   │   ├── ImageUploader.vue/.test.ts  # T26
 │   │   │   ├── FilterBar.vue/.test.ts      # T27
 │   │   │   ├── CategoryPicker.vue/.test.ts # T27
-│   │   │   └── TagPicker.vue/.test.ts      # T27
+│   │   │   ├── TagPicker.vue/.test.ts      # T27
+│   │   │   └── OutfitCanvas.vue/.test.ts   # T28
 │   │   ├── pages/                          # T29 起
+│   │   │   └── index/index.vue             # 占位 Hello，T29 替换
 │   │   ├── api/                            # schema.d.ts + index.ts
 │   │   └── stores/                         # pinia
 │   ├── vitest.config.ts
@@ -145,7 +147,7 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 ├── docs/
 │   └── superpowers/
 │       ├── specs/2026-07-01-digital-closet-design.md
-│       ├── plans/2026-07-01-digital-closet-mvp.md  # 36 个 Task
+│       ├── plans/2026-07-01-digital-closet-mvp.md
 │       └── handoff.md                      # 本文件
 ├── .gitignore
 └── README.md
@@ -178,18 +180,15 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 
 ### 踩坑 #1：Subagent 状态报告不可信
 
-Chandrasekhar（T4）报 BLOCKED 说"环境不对、没编译、没提交"，但实际：
-- 它找到了 `D:\apache-maven-3.9.9` 并成功编译
-- 它提交了 `0ec6ae7`
-- 它启动过应用并跑完 schema 初始化
+Chandrasekhar（T4）报 BLOCKED 说"环境不对、没编译、没提交"，但实际：找到 maven、编译成功、提交了 `0ec6ae7`、启动过应用。
 
 **教训**：永远自己 `git log` / `git status` 验证一遍。
 
 ### 踩坑 #2：Subagent 容易卡死在 sleep 操作
 
-Wegener、T2 Poincare 都卡在 `Start-Sleep -Seconds 30` 不返回。
+Wegener、T2 Poincare 都卡在 `Start-Sleep -Seconds 30`。
 
-**教训**：派 subagent 时显式禁止 `Start-Sleep`、循环等待、置死。mvn/psql/docker exec 是同步的，直接等返回即可。
+**教训**：派 subagent 时显式禁止 `Start-Sleep`、循环等待、置死。
 
 ### 踩坑 #3：`spring.sql.init.mode: always` 在 schema 已存在时失败
 
@@ -197,41 +196,19 @@ Wegener、T2 Poincare 都卡在 `Start-Sleep -Seconds 30` 不返回。
 
 **当前 workaround**：每次重启应用前先 `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`。
 
-**长期方案**（T13 部署前再处理）：改成 `mode: never`，靠手动初始化；或 profile 区分；或 schema.sql 加 `IF NOT EXISTS`。
+**长期方案**（T13 部署前再处理）：改成 `mode: never`，靠手动初始化；或 profile 区分。
 
 ### 踩坑 #4：apply_patch 格式
 
-每行内容前必须加 `+` 前缀，包括空行和注释行。如果用 PowerShell here-string 写大文件，注意 `Get-Content | Add-Content` 会丢换行，必须用 `Get-Content -Raw` 或 `Set-Content`。
+每行内容前必须加 `+` 前缀，包括空行和注释行。用 PowerShell here-string 写大文件时用 `Out-File -Encoding UTF8`。
 
 ### 踩坑 #5：Codex 启动子进程用缓存的 system PATH
 
 改 system 环境变量后，当前 Codex 进程内的子进程不会立刻看到。需要重启 Codex。
 
-### 踩坑 #6：PowerShell 多行字符串替换复杂
+### 踩坑 #6：vitest `stubs: true` 默认不渲染 slot
 
-`-replace` 处理带特殊字符的中文文本容易失败。处理多行内容时直接用 `Set-Content` 重写整个文件更可靠。
-
-### 踩坑 #7：MyBatis-Plus 3.5.9 删了 `PaginationInnerInterceptor`
-
-3.5.9 的 `mybatis-plus-extension` jar 里只有 `InnerInterceptor` 接口和 `DynamicTableName/OptimisticLocker/ReplacePlaceholder` 三个实现，**没有 `PaginationInnerInterceptor`**（3.5.5 有）。原因是 3.5.9 把分页拦截器拆到独立的 `mybatis-plus-jsqlparser` 模块。
-
-**当前 workaround**：`pom.xml` 把 `mybatis-plus.version` 钉到 `3.5.5`。
-
-**长期方案**（可选）：加 `com.baomidou:mybatis-plus-jsqlparser` 依赖后升回 3.5.9。
-
-### 踩坑 #8：Testcontainers + Docker Desktop 4.80.0 不兼容
-
-按 T6 计划用 `@Testcontainers MinIOContainer`，但 dockerjava 客户端拿不到 `/info` 响应（空响应），容器起不来。
-
-**当前 workaround**：`MinioStorageServiceIT` 直接连 docker-compose 启动的本地 MinIO，用 `@TestPropertySource` 切到隔离 bucket `closet-it`，`@BeforeEach` 建桶 + `@AfterEach` 清对象。代码里有注释解释。
-
-### 踩坑 #9：MyBatis-Plus `DbType` 枚举名是 `POSTGRE_SQL`（带下划线）
-
-计划里写 `DbType.POSTGRE_SQL` 是对的，反编译 `mybatis-plus-annotation-3.5.5.jar` 确认。一开始误写 `POSTGRESQL`（无下划线）→ 编译过但运行时报 `Unresolved compilation problem: POSTGRESQL cannot be resolved`，因为 Spring Boot 用 JDT 编译器运行时校验。
-
-### 踩坑 #10：vitest `stubs: true` 默认不渲染 slot
-
-`global: { stubs: { 'up-checkbox-group': true, 'up-checkbox': true } }` 这种简写生成的 stub 是**纯标签占位**，不传 slot，导致父组件 `v-for="c in categories"` 渲染出的子元素全部丢失，测试断言 `expect(html).toContain('上装')` 直接挂。
+`global: { stubs: { 'up-checkbox-group': true, 'up-checkbox': true } }` 简写生成的 stub 是纯标签占位，不传 slot，导致父组件 `v-for` 渲染出的子元素全部丢失。
 
 **正确做法**：在 `vitest.setup.ts` 里写自定义 stub 组件，用 `h()` 透传 attrs 和 slots.default：
 
@@ -247,7 +224,23 @@ const upCheckboxStub = defineComponent({
 config.global.components['up-checkbox'] = upCheckboxStub;
 ```
 
-测试里直接 `global.stubs` 不用写，断言用 `wrapper.findAllComponents({ name: 'UpCheckboxStub' })` 或 `expect(html).toContain('xxx')`。
+测试里不用 `global.stubs`，断言用 `wrapper.findAllComponents({ name: 'UpCheckboxStub' })` 或 `expect(html).toContain('xxx')`。
+
+### 踩坑 #7：MyBatis-Plus 3.5.9 删了 `PaginationInnerInterceptor`
+
+3.5.9 的 jar 里没有分页拦截器（拆到独立的 `mybatis-plus-jsqlparser`）。
+
+**当前 workaround**：`pom.xml` 把 `mybatis-plus.version` 钉到 `3.5.5`。
+
+### 踩坑 #8：Testcontainers + Docker Desktop 4.80.0 不兼容
+
+`@Testcontainers MinIOContainer` 起不来（dockerjava 拿不到 `/info` 响应）。
+
+**当前 workaround**：`MinioStorageServiceIT` 连 docker-compose 启动的本地 MinIO，`@TestPropertySource` 切到隔离 bucket `closet-it`。
+
+### 踩坑 #9：MyBatis-Plus `DbType` 枚举名是 `POSTGRE_SQL`（带下划线）
+
+`POSTGRESQL`（无下划线）编译过但运行时报 `Unresolved compilation problem`，因为 Spring Boot 用 JDT 编译器运行时校验。
 
 ## 7. Subagent 派发模板
 
@@ -267,7 +260,7 @@ config.global.components['up-checkbox'] = upCheckboxStub;
 ## 8. 工作流程约定
 
 - 分支：直接在 main 上工作（用户明确同意）
-- 提交：每个 Task 一个 code commit，message 用任务规格里的格式；task 完成后单独一个 docs commit 更新 handoff.md（AGENTS.md 要求）
+- 提交：每个 Task 一个 code commit（message 用任务规格里的格式）+ 一个 docs commit（更新 handoff.md）
 - 用户偏好：
   - 报告用中文
   - subagent 跑的时候每 3 分钟汇报一次进度
@@ -277,7 +270,7 @@ config.global.components['up-checkbox'] = upCheckboxStub;
 
 ## 9. 下一步操作
 
-**直接做 T28**：写 OutfitCanvas.vue + .test.ts，然后跑 vitest 验证，最后 code commit + docs commit。
+**直接做 T29**：写 pages/index/index.vue + .test.ts，然后跑 vitest 验证，最后 code commit + docs commit。
 
 ## 10. 关键文件位置速查
 
