@@ -1,0 +1,26 @@
+﻿# Production profile: container-to-container discovery via service names.
+# All sensitive values are injected via environment variables from docker-compose.
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+
+server:
+  port: ${SERVER_PORT:8080}
+
+minio:
+  endpoint: ${MINIO_ENDPOINT}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket: ${MINIO_BUCKET}
+
+# Open CORS for any frontend (or lock down to specific origins in production)
+# This MVP is single-user local; CORS is permissive by design.
