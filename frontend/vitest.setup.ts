@@ -1,11 +1,12 @@
 import { config } from '@vue/test-utils';
 import { h, defineComponent } from 'vue';
+import { vi } from 'vitest';
 
 // uni-app 标签 -> 原生 HTML 元素映射。
 // 必须用 h() render function，不能用 template: '<img><slot/></img>'
 // （happy-dom 对自闭合 img 标签的 template 解析有问题）。
 // 组件的 name 用 'UniXxx' 前缀避开和原生 HTML 元素名冲突。
-const passthrough = (htmlTag: 'img' | 'div' | 'span', name: string) =>
+const passthrough = (htmlTag: 'img' | 'div' | 'span' | 'button', name: string) =>
   defineComponent({
     name,
     setup(_, { slots, attrs }) {
@@ -37,6 +38,22 @@ const upCheckboxStub = defineComponent({
   },
 });
 
+// 全局 uni 命名空间 stub —— uni-app runtime 在浏览器端用 uni.xxx() 调用
+// 这里给出测试用最小实现：所有方法都用 vi.fn() 记录调用，便于断言。
+export const uniMock = {
+  navigateTo: vi.fn(),
+  navigateBack: vi.fn(),
+  redirectTo: vi.fn(),
+  showToast: vi.fn(),
+  showActionSheet: vi.fn(),
+  showModal: vi.fn(),
+  chooseImage: vi.fn(),
+  uploadFile: vi.fn(),
+  canvasToTempFilePath: vi.fn(),
+  share: vi.fn(),
+};
+(globalThis as unknown as { uni: typeof uniMock }).uni = uniMock;
+
 config.global.components = {
   ...(config.global.components as Record<string, unknown>),
   image: passthrough('img', 'UniImage'),
@@ -46,4 +63,8 @@ config.global.components = {
   picker: passthrough('div', 'UniPicker'),
   'up-checkbox-group': upCheckboxGroupStub,
   'up-checkbox': upCheckboxStub,
+  // 页面常用的 uView Plus 组件
+  'up-card': passthrough('div', 'UpCardStub'),
+  'up-button': passthrough('button', 'UpButtonStub'),
+  'up-calendar': passthrough('div', 'UpCalendarStub'),
 };
