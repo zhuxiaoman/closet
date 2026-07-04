@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T24 已完成，T25 待开始（ClothingCard 组件 + Vitest）
-> 最后提交：`308184a`（T24）
+> 截止：T1-T25 已完成，T26 待开始（ImageUploader 组件 + Vitest）
+> 最后提交：`2fe8116`（T25）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（29 个 commit，含 5 个 docs）
+### 已完成（30 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -54,6 +54,7 @@
 | T22 | `5030995` | feat(frontend): uni-app init with uView Plus + Vitest |
 | T23 | `d0c92af` | feat(frontend): OpenAPI client and API wrapper |
 | T24 | `308184a` | feat(frontend): pinia stores and routing |
+| T25 | `2fe8116` | feat(frontend): ClothingCard with image fallback |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -62,22 +63,23 @@
 
 ### 待办
 
-**当前：T25**（ClothingCard 组件 + Vitest）
+**当前：T26**（ImageUploader 组件 + Vitest）
 
-T24 已完成：3 个 Pinia store + pages.json 扩展 10 路由，commit `308184a`。
+T25 已完成：ClothingCard + Vitest 2/2 全绿 1.03s，commit `2fe8116`。
 
-T25 任务（计划文档 §4 第 12 项，详见 3025-3100 行）：
-- src/components/ClothingCard.test.ts（先写失败测试，2 个用例：renders name + image / placeholder fallback）
-- src/components/ClothingCard.vue（computed imgSrc：有 mainImageKey 走 /api/v1/images/...，否则 /static/placeholder.png）
-- 跑 npx vitest run src/components/ClothingCard.test.ts 全绿
-- 提交信息：feat(frontend): ClothingCard with image fallback（中文详细）
+T26 任务（计划文档 §4 第 13 项，详见 3100-3200 行）：
+- src/components/ImageUploader.test.ts（2 个 Vitest 用例：上传 emit / placeholder 文本）
+- src/components/ImageUploader.vue（file input + multi-image list + 触发 upload event）
+- 跑 vitest 全绿
+- 提交信息：feat(frontend): ImageUploader component（中文详细）
 
-注意：
-- 先写测试，再写组件（TDD）
-- vitest config 还没建，npx vitest run 默认用 vitest 自动找测试文件
-- happy-dom 装好了，可以 mount Vue 组件
+**踩坑提示**（重要！subagent 必须知道）：
+- PowerShell 下 `Set-Content` 不带 -Encoding 默认 GBK，中文会变乱码
+- 必须用 `... | Out-File -Encoding UTF8` 写文件，或者 `git commit -F <file>` 写 commit message
+- `git commit -m "/api"` 会报错，务必用文件方式
+- vitest 中 `wrapper.find('img')` 找不到 happy-dom 渲染的 `h('img')` 元素，改用 `wrapper.html()` 检查字符串
 
-后续 T26：ImageUploader 组件 + Vitest。T27：ClothingList 组件。T28：ClothingForm 表单页。
+后续 T27：ClothingList 组件。T28：ClothingForm 表单。
 
 ## 4. 工作目录与关键路径
 
