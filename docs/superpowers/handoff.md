@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T25 已完成，T26 待开始（ImageUploader 组件 + Vitest）
-> 最后提交：`2fe8116`（T25）
+> 截止：T1-T26 已完成，T27 待开始（ClothingList 组件 + Vitest）
+> 最后提交：`789a285`（T26）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（30 个 commit，含 5 个 docs）
+### 已完成（31 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -55,6 +55,7 @@
 | T23 | `d0c92af` | feat(frontend): OpenAPI client and API wrapper |
 | T24 | `308184a` | feat(frontend): pinia stores and routing |
 | T25 | `2fe8116` | feat(frontend): ClothingCard with image fallback |
+| T26 | `789a285` | feat(frontend): ImageUploader component |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -63,23 +64,28 @@
 
 ### 待办
 
-**当前：T26**（ImageUploader 组件 + Vitest）
+**当前：T27**（ClothingList 组件 + Vitest）
 
-T25 已完成：ClothingCard + Vitest 2/2 全绿 1.03s，commit `2fe8116`。
+T26 已完成：ImageUploader + Vitest 3/3 全绿 1.12s，commit `789a285`。
+- 新增 `frontend/src/components/ImageUploader.vue`（file input + multi-image list + emit uploaded）
+- 新增 `frontend/src/components/ImageUploader.test.ts`（3 个 Vitest 用例）
 
-T26 任务（计划文档 §4 第 13 项，详见 3100-3200 行）：
-- src/components/ImageUploader.test.ts（2 个 Vitest 用例：上传 emit / placeholder 文本）
-- src/components/ImageUploader.vue（file input + multi-image list + 触发 upload event）
-- 跑 vitest 全绿
-- 提交信息：feat(frontend): ImageUploader component（中文详细）
+T27 任务（计划文档 §4 第 14 项）：
+- `frontend/src/components/ClothingList.vue`（列表渲染 ClothingCard + 分页/筛选 UI + 空状态）
+- `frontend/src/components/ClothingList.test.ts`（Vitest：空状态 / 渲染多张卡 / 点击事件）
+- 接入 `useClothingStore`，调用 `fetchPage` + 监听 `loading`
+- 提交信息：`feat(frontend): ClothingList component`（中文详细）
 
 **踩坑提示**（重要！subagent 必须知道）：
 - PowerShell 下 `Set-Content` 不带 -Encoding 默认 GBK，中文会变乱码
-- 必须用 `... | Out-File -Encoding UTF8` 写文件，或者 `git commit -F <file>` 写 commit message
-- `git commit -m "/api"` 会报错，务必用文件方式
+- 必须用 `... | Out-File -Encoding UTF8` 写文件
+- `git commit -m "/api"` 会报错，务必用 `git commit -F <file>` 写 commit message
 - vitest 中 `wrapper.find('img')` 找不到 happy-dom 渲染的 `h('img')` 元素，改用 `wrapper.html()` 检查字符串
+- `wrapper.html().toContain('xxx')` 是稳的断言方式
+- 组件 name 用 `UniXxx` 前缀避开与 HTML 原生元素冲突
+- 不要修改任何 backend 文件 / handoff.md / plan 文档 / 别人的子任务产物
 
-后续 T27：ClothingList 组件。T28：ClothingForm 表单。
+后续 T28：ClothingForm 表单页（创建/编辑）。
 
 ## 4. 工作目录与关键路径
 
