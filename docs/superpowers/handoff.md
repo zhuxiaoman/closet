@@ -1,8 +1,8 @@
 # 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T26 已完成，T27 待开始（ClothingList 组件 + Vitest）
-> 最后提交：`789a285`（T26）
+> 截止：T1-T28 已完成，T29 待开始（OutfitForm 搭配表单）
+> 最后提交：`6839fdf`（T28）
 
 ## 1. 项目概述
 
@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（32 个 commit，含 5 个 docs）
+### 已完成（33 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -57,6 +57,7 @@
 | T25 | `2fe8116` | feat(frontend): ClothingCard with image fallback |
 | T26 | `789a285` | feat(frontend): ImageUploader component |
 | T27 | `a861a4c` | feat(frontend): ClothingList component |
+| T28 | `6839fdf` | feat(frontend): ClothingForm component |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -65,16 +66,16 @@
 
 ### 待办
 
-**当前：T28**（ClothingForm 表单页 + Vitest）
+**当前：T29**（OutfitForm 搭配表单 + Vitest）
 
-T27 已完成：ClothingList + Vitest 5/5 全绿 1.08s，commit `a861a4c`。
-- 新增 `frontend/src/components/ClothingList.vue`（Uni 前缀名 + error/loading/empty/list 四态 + 转发 click 为 item-click）
-- 新增 `frontend/src/components/ClothingList.test.ts`（5 个 Vitest 用例）
+T28 已完成：ClothingForm + Vitest 5/5 全绿 1.12s，commit `6839fdf`。
+- 新增 `frontend/src/components/ClothingForm.vue`（Uni 前缀名 + 8 字段表单 + name 必填校验 + submit/cancel + 支持编辑模式 via initial prop）
+- 新增 `frontend/src/components/ClothingForm.test.ts`（5 个 Vitest 用例）
 
-T28 任务（计划文档 §4 第 15 项）：
-- `frontend/src/components/ClothingForm.vue`（Uni 前缀名 + name/brand/color/category/size/season/price/date/notes 字段 + name 必填校验 + submit/cancel 事件）
-- `frontend/src/components/ClothingForm.test.ts`（Vitest：空表单校验失败 / 字段填充后 submit emit / cancel emit）
-- 提交信息：`feat(frontend): ClothingForm component`（中文详细）
+T29 任务（计划文档 §4 第 16 项）：
+- `frontend/src/components/OutfitForm.vue`（Uni 前缀名 + name/description/season 字段 + 多选 clothing 列表 checkbox + 至少选 1 件衣物校验 + submit/cancel 事件）
+- `frontend/src/components/OutfitForm.test.ts`（Vitest：空表单校验 / 选中衣物后 submit emit / cancel emit）
+- 提交信息：`feat(frontend): OutfitForm component`（中文详细）
 
 **踩坑提示**（重要！subagent 必须知道）：
 - PowerShell 下 `Set-Content` 不带 -Encoding 默认 GBK，中文会变乱码
@@ -85,7 +86,7 @@ T28 任务（计划文档 §4 第 15 项）：
 - 组件 name 用 `UniXxx` 前缀避开与 HTML 原生元素冲突
 - 不要修改任何 backend 文件 / handoff.md / plan 文档 / 别人的子任务产物
 
-后续 T29：OutfitPicker / OutfitForm。
+后续 T30：Calendar 日历页面。
 
 ## 4. 工作目录与关键路径
 
