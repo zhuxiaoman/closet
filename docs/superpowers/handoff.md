@@ -26,7 +26,7 @@
 
 ## 3. 当前进度
 
-### 已完成（31 个 commit，含 5 个 docs）
+### 已完成（32 个 commit，含 5 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
@@ -56,6 +56,7 @@
 | T24 | `308184a` | feat(frontend): pinia stores and routing |
 | T25 | `2fe8116` | feat(frontend): ClothingCard with image fallback |
 | T26 | `789a285` | feat(frontend): ImageUploader component |
+| T27 | `a861a4c` | feat(frontend): ClothingList component |
 | -    | `8b4072f` | docs: project handoff summary for session continuity |
 | -    | `b484530` | docs: update handoff with T5 completion |
 | -    | `3891081` | docs: update handoff with T6+T7 completion |
@@ -64,17 +65,16 @@
 
 ### 待办
 
-**当前：T27**（ClothingList 组件 + Vitest）
+**当前：T28**（ClothingForm 表单页 + Vitest）
 
-T26 已完成：ImageUploader + Vitest 3/3 全绿 1.12s，commit `789a285`。
-- 新增 `frontend/src/components/ImageUploader.vue`（file input + multi-image list + emit uploaded）
-- 新增 `frontend/src/components/ImageUploader.test.ts`（3 个 Vitest 用例）
+T27 已完成：ClothingList + Vitest 5/5 全绿 1.08s，commit `a861a4c`。
+- 新增 `frontend/src/components/ClothingList.vue`（Uni 前缀名 + error/loading/empty/list 四态 + 转发 click 为 item-click）
+- 新增 `frontend/src/components/ClothingList.test.ts`（5 个 Vitest 用例）
 
-T27 任务（计划文档 §4 第 14 项）：
-- `frontend/src/components/ClothingList.vue`（列表渲染 ClothingCard + 分页/筛选 UI + 空状态）
-- `frontend/src/components/ClothingList.test.ts`（Vitest：空状态 / 渲染多张卡 / 点击事件）
-- 接入 `useClothingStore`，调用 `fetchPage` + 监听 `loading`
-- 提交信息：`feat(frontend): ClothingList component`（中文详细）
+T28 任务（计划文档 §4 第 15 项）：
+- `frontend/src/components/ClothingForm.vue`（Uni 前缀名 + name/brand/color/category/size/season/price/date/notes 字段 + name 必填校验 + submit/cancel 事件）
+- `frontend/src/components/ClothingForm.test.ts`（Vitest：空表单校验失败 / 字段填充后 submit emit / cancel emit）
+- 提交信息：`feat(frontend): ClothingForm component`（中文详细）
 
 **踩坑提示**（重要！subagent 必须知道）：
 - PowerShell 下 `Set-Content` 不带 -Encoding 默认 GBK，中文会变乱码
@@ -85,7 +85,7 @@ T27 任务（计划文档 §4 第 14 项）：
 - 组件 name 用 `UniXxx` 前缀避开与 HTML 原生元素冲突
 - 不要修改任何 backend 文件 / handoff.md / plan 文档 / 别人的子任务产物
 
-后续 T28：ClothingForm 表单页（创建/编辑）。
+后续 T29：OutfitPicker / OutfitForm。
 
 ## 4. 工作目录与关键路径
 
