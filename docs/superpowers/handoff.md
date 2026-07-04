@@ -1,20 +1,20 @@
-# 电子衣橱 MVP 项目状态总结（Handoff）
+﻿# 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 截止：T1-T28 已完成，T29 待开始（OutfitForm 搭配表单）
-> 最后提交：`6839fdf`（T28）
+> 状态：T1-T27 已完成，T28 待开始（OutfitCanvas 搭配画布 + Vitest）
+> 最后提交：`fd03739`（T27）
 
 ## 1. 项目概述
 
 - 名称：电子衣橱（Digital Closet）MVP
-- 定位：个人使用，单用户，自托管在用户自己的 PC 上
+- 定位：个人使用，单用户，自托管，跑在用户自己的 PC 上
 - 范围：衣物录入 + 搭配组合 + 日历规划 + 穿着统计 + 搭配导出分享
-- 不做：多用户 / 社交、AI 打标签、电商、推送
+- 不做：多用户 / 社交、AI 打标、电商、推送
 
 ## 2. 技术栈
 
 | 层 | 选型 |
-|----|------|
+|---|---|
 | 前端 | uni-app（Vue 3 + TypeScript），uView Plus，Pinia，Vite |
 | 前端测试 | Vitest + @vue/test-utils（仅核心组件） |
 | 后端 | Java 21 + Spring Boot 3.3.4 + MyBatis-Plus 3.5.5（见踩坑 #7） |
@@ -26,19 +26,19 @@
 
 ## 3. 当前进度
 
-### 已完成（33 个 commit，含 5 个 docs）
+### 已完成（34 个 commit，含 6 个 docs）
 
 | 任务 | 提交 | 内容 |
 |------|------|------|
-| T1 | `ad0ebdd` | chore: project skeleton and gitignore |
-| T2 | `3157e0e` | chore: docker compose for local dev (PG + MinIO) |
-| T3 | `bbcb1f5` | feat(db): schema and seed data for MVP |
-| T4 | `0ec6ae7` | feat(backend): spring boot project init with PG + MinIO deps |
-| T5 | `4b3f0e5` | feat(common): Result wrapper and global exception handler |
-| T6 | `3ea8146` | feat(storage): MinIO storage service（用本地 MinIO + TestPropertySource，详见踩坑 #8） |
-| T7 | `b981c3f` | feat(backend): MyBatis-Plus pagination and CORS config |
-| T8 | `829a96b` | feat(category): CRUD with MyBatis-Plus |
-| T9 | `d38e833` | feat(tag): CRUD with MyBatis-Plus |
+| T1  | `ad0ebdd` | chore: project skeleton and gitignore |
+| T2  | `3157e0e` | chore: docker compose for local dev (PG + MinIO) |
+| T3  | `bbcb1f5` | feat(db): schema and seed data for MVP |
+| T4  | `0ec6ae7` | feat(backend): spring boot project init with PG + MinIO deps |
+| T5  | `4b3f0e5` | feat(common): Result wrapper and global exception handler |
+| T6  | `3ea8146` | feat(storage): MinIO storage service（本地 MinIO + TestPropertySource，见踩坑 #8） |
+| T7  | `b981c3f` | feat(backend): MyBatis-Plus pagination and CORS config |
+| T8  | `829a96b` | feat(category): CRUD with MyBatis-Plus |
+| T9  | `d38e833` | feat(tag): CRUD with MyBatis-Plus |
 | T10 | `282334d` | feat(clothing): Clothing 实体 + Mapper + 元数据填充器 |
 | T11 | `95f4293` | feat(clothing): ClothingService + DTO + 11 个单元测试 |
 | T12 | `dde51fd` | feat(clothing): ClothingController + IT（4 个集成测试） |
@@ -56,37 +56,48 @@
 | T24 | `308184a` | feat(frontend): pinia stores and routing |
 | T25 | `2fe8116` | feat(frontend): ClothingCard with image fallback |
 | T26 | `789a285` | feat(frontend): ImageUploader component |
-| T27 | `a861a4c` | feat(frontend): ClothingList component |
-| T28 | `6839fdf` | feat(frontend): ClothingForm component |
-| -    | `8b4072f` | docs: project handoff summary for session continuity |
-| -    | `b484530` | docs: update handoff with T5 completion |
-| -    | `3891081` | docs: update handoff with T6+T7 completion |
-| -    | `e08c749` | docs: update handoff with T8 completion |
-| -    | `ccf141e` | docs: update handoff with T9 completion |
+| T27 | `fd03739` | feat(frontend): FilterBar / CategoryPicker / TagPicker components |
+| -   | `8b4072f` | docs: project handoff summary for session continuity |
+| -   | `b484530` | docs: update handoff with T5 completion |
+| -   | `3891081` | docs: update handoff with T6+T7 completion |
+| -   | `e08c749` | docs: update handoff with T8 completion |
+| -   | `ccf141e` | docs: update handoff with T9 completion |
+| -   | `6839fdf`/`a861a4c`/`6c45df6` | 越位的 ClothingForm + ClothingList（已合并到 `fd03739` 中删除，回归 plan 正确路径） |
 
 ### 待办
 
-**当前：T29**（OutfitForm 搭配表单 + Vitest）
+**当前：T28**：OutfitCanvas 搭配画布 + Vitest（plan 第 4 节 T28）
 
-T28 已完成：ClothingForm + Vitest 5/5 全绿 1.12s，commit `6839fdf`。
-- 新增 `frontend/src/components/ClothingForm.vue`（Uni 前缀名 + 8 字段表单 + name 必填校验 + submit/cancel + 支持编辑模式 via initial prop）
-- 新增 `frontend/src/components/ClothingForm.test.ts`（5 个 Vitest 用例）
+T27 刚完成：
+- `frontend/src/components/FilterBar.vue`：季节筛选（picker 第 0 项「全部」映射回 null，其余 spring/summer/fall/winter），picker @change 触发；emit change 时全量透传 ClothingFilter，避免后续加字段时丢字段
+- `frontend/src/components/CategoryPicker.vue` / `TagPicker.vue`：uView Plus up-checkbox-group 包装，v-model 双向同步 props.modelValue 与内部 selected，初始不 emit 避免重复回写
+- 21/21 Vitest 全绿（FilterBar 6 + CategoryPicker 5 + TagPicker 5 + ClothingCard 2 + ImageUploader 3）
+- `vitest.setup.ts`：picker 全局注册为 UniPicker；uView Plus 的 up-checkbox-group / up-checkbox 用 stub 全局注册（含 slot 渲染，见踩坑 #10）
+- 顺带删除越位的 ClothingList.vue / ClothingForm.vue + 它们的测试
 
-T29 任务（计划文档 §4 第 16 项）：
-- `frontend/src/components/OutfitForm.vue`（Uni 前缀名 + name/description/season 字段 + 多选 clothing 列表 checkbox + 至少选 1 件衣物校验 + submit/cancel 事件）
-- `frontend/src/components/OutfitForm.test.ts`（Vitest：空表单校验 / 选中衣物后 submit emit / cancel emit）
-- 提交信息：`feat(frontend): OutfitForm component`（中文详细）
+T28 任务：
+- `frontend/src/components/OutfitCanvas.vue`：props `items: OutfitItem[]`，按 sortOrder 升序显示 tile 网格（image + name）；空 items 显示提示
+- `frontend/src/components/OutfitCanvas.test.ts`：渲染 N 个 tile、按 sortOrder 排序、缺失 sortOrder 视为 0、props 更新响应
+- 提交信息：`feat(frontend): OutfitCanvas with sort-by-order`
 
-**踩坑提示**（重要！subagent 必须知道）：
-- PowerShell 下 `Set-Content` 不带 -Encoding 默认 GBK，中文会变乱码
-- 必须用 `... | Out-File -Encoding UTF8` 写文件
-- `git commit -m "/api"` 会报错，务必用 `git commit -F <file>` 写 commit message
-- vitest 中 `wrapper.find('img')` 找不到 happy-dom 渲染的 `h('img')` 元素，改用 `wrapper.html()` 检查字符串
-- `wrapper.html().toContain('xxx')` 是稳的断言方式
-- 组件 name 用 `UniXxx` 前缀避开与 HTML 原生元素冲突
+下一阶段：T29-T36
+- T29: pages/index/index.vue 首页（统计概览 + 跳转）
+- T30: pages/closet + pages/clothing-form + pages/clothing-detail
+- T31: pages/outfits + pages/outfit-form + pages/outfit-detail
+- T32: pages/calendar
+- T33: pages/stats + pages/settings
+- T34-T36: 部署（Backend Dockerfile + 生产 compose + README + 烟测）
+
+### 踩坑提示（重要，subagent 必须知道）
+
+- PowerShell 中 `Set-Content` 不带 -Encoding 默认 GBK，中文会乱码；必须用 `... | Out-File -Encoding UTF8` 写文件
+- `git commit -m "/..."` 某些内容会进交互编辑，必须用 `git commit -F <file>` 传 commit message
+- vitest 中 `wrapper.find('img')` **找不到**全局注册的组件（全局组件渲染后 tag 名变成实际元素名）；查找组件实例用 `wrapper.findComponent({ name: 'UniXxx' })`；查找 DOM 元素用 `wrapper.html().toContain('xxx')`
+- `wrapper.html().toContain('xxx')` 是稳的字符串断言
+- 组件 name 用 `UniXxx` 前缀避开 HTML 原生标签冲突
+- **vitest `stubs: true` 默认不渲染 slot** —— 见踩坑 #10
 - 不要修改任何 backend 文件 / handoff.md / plan 文档 / 别人的子任务产物
-
-后续 T30：Calendar 日历页面。
+- 用中文汇报
 
 ## 4. 工作目录与关键路径
 
@@ -106,24 +117,36 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 │   │   │   └── CorsConfig.java             # CORS
 │   │   └── storage/                        # T6 新增
 │   │       ├── StorageService.java         # 接口
-│   │       └── MinioStorageService.java    # 实现（NoSuchKey 静默吞掉）
+│   │       └── MinioStorageService.java    # 实现（NoSuchKey 静默吃掉）
 │   ├── src/test/java/com/closet/
 │   │   ├── common/ResultTest.java          # T5 测试（2 个）
 │   │   └── integration/
-│   │       └── MinioStorageServiceIT.java  # T6 测试（2 个，跑本地 MinIO + PG）
-│   ├── src/main/resources/
-│   │   ├── application.yml                 # mode: always（见踩坑 #3）
-│   │   ├── application-dev.yml
-│   │   ├── schema.sql                      # 10 张表
-│   │   └── data.sql                        # 5+5 默认分类
-│   └── target/                             # 构建产物（gitignore）
+│   │       └── MinioStorageServiceIT.java  # T6 测试（3 个，跑本地 MinIO + PG）
+│   └── src/main/resources/
+│       ├── application.yml                 # mode: always（见踩坑 #3）
+│       ├── application-dev.yml
+│       ├── schema.sql                      # 10 张表
+│       └── data.sql                        # 5+5 默认分类
 ├── deploy/
 │   └── docker-compose.dev.yml              # PG + MinIO + minio-init
+├── frontend/
+│   ├── src/
+│   │   ├── components/                     # T25-T28
+│   │   │   ├── ClothingCard.vue/.test.ts   # T25
+│   │   │   ├── ImageUploader.vue/.test.ts  # T26
+│   │   │   ├── FilterBar.vue/.test.ts      # T27
+│   │   │   ├── CategoryPicker.vue/.test.ts # T27
+│   │   │   └── TagPicker.vue/.test.ts      # T27
+│   │   ├── pages/                          # T29 起
+│   │   ├── api/                            # schema.d.ts + index.ts
+│   │   └── stores/                         # pinia
+│   ├── vitest.config.ts
+│   └── vitest.setup.ts                     # 全局组件 / stub
 ├── docs/
 │   └── superpowers/
 │       ├── specs/2026-07-01-digital-closet-design.md
-│       ├── plans/2026-07-01-digital-closet-mvp.md  # 36 个 Task 的实施计划
-│       └── handoff.md                      # 本文档
+│       ├── plans/2026-07-01-digital-closet-mvp.md  # 36 个 Task
+│       └── handoff.md                      # 本文件
 ├── .gitignore
 └── README.md
 ```
@@ -132,11 +155,11 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 
 ### Java / Maven（PATH 已修好）
 
-- Java 21：`C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot`
+- Java 21: `C:\Program Files\Microsoft\jdk-21.0.11.10-hotspot`
   - `JAVA_HOME`（user + machine）已设
-- Maven 3.9.9：`D:\apache-maven-3.9.9`
+- Maven 3.9.9: `D:\apache-maven-3.9.9`
   - `MAVEN_HOME`（machine）已改为 3.9.9
-- 旧的 Java 8（`D:\Program Files\Java\jdk1.8.0_271`）和 Maven 3.5.4 已从 system PATH 移除
+- 旧的 Java 8 和 Maven 3.5.4 已从 system PATH 移除
 
 ### Docker（已安装并运行）
 
@@ -145,7 +168,7 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
   - `closet-pg-dev`（postgres:16-alpine, healthy, 5432）
   - `closet-minio-dev`（minio/minio, healthy, 9000/9001）
   - `deploy-minio-init-1`（exited(0)，bucket `closet-images` 已建）
-- IT 测试用隔离 bucket `closet-it`，用 `@BeforeEach` 创建 + `@AfterEach` 清
+- IT 测试用隔离 bucket `closet-it`，`@BeforeEach` 建桶 + `@AfterEach` 清对象
 
 ### mvn 命令
 
@@ -153,105 +176,108 @@ C:\Users\huchang\Documents\Codex\2026-07-01\new-chat\
 
 ## 6. 已知问题和踩坑记录
 
-### 坑 1：Subagent 状态报告不可信
+### 踩坑 #1：Subagent 状态报告不可信
 
 Chandrasekhar（T4）报 BLOCKED 说"环境不对、没编译、没提交"，但实际：
 - 它找到了 `D:\apache-maven-3.9.9` 并成功编译
 - 它提交了 `0ec6ae7`
-- 它启动过应用并跑了 schema 初始化（这导致 PG 里已有表）
+- 它启动过应用并跑完 schema 初始化
 
 **教训**：永远自己 `git log` / `git status` 验证一遍。
 
-### 坑 2：Subagent 容易卡死在 sleep 操作
+### 踩坑 #2：Subagent 容易卡死在 sleep 操作
 
 Wegener、T2 Poincare 都卡在 `Start-Sleep -Seconds 30` 不返回。
 
-**教训**：派 subagent 时显式禁止 `Start-Sleep`、循环等待、轮询。mvn/psql/docker exec 是同步的，直接等返回即可。
+**教训**：派 subagent 时显式禁止 `Start-Sleep`、循环等待、置死。mvn/psql/docker exec 是同步的，直接等返回即可。
 
-### 坑 3：`spring.sql.init.mode: always` 在 schema 已存在时失败
+### 踩坑 #3：`spring.sql.init.mode: always` 在 schema 已存在时失败
 
 应用启动报 `ERROR: relation "category" already exists`。
 
 **当前 workaround**：每次重启应用前先 `DROP SCHEMA public CASCADE; CREATE SCHEMA public;`。
 
-**长期方案**（T13 部署前再处理）：
-- 改成 `mode: never`，靠手动初始化
-- 或 profile 区分（dev 用 always，prod 用 never）
-- 或 schema.sql 加 `IF NOT EXISTS`
+**长期方案**（T13 部署前再处理）：改成 `mode: never`，靠手动初始化；或 profile 区分；或 schema.sql 加 `IF NOT EXISTS`。
 
-### 坑 4：apply_patch 格式
+### 踩坑 #4：apply_patch 格式
 
-每行内容前必须加 `+` 前缀，包括空行和注释行。
-如果用 PowerShell here-string 写大文件，注意 `Get-Content | Add-Content` 会丢换行，必须用 `Get-Content -Raw` 或 `Set-Content`。
+每行内容前必须加 `+` 前缀，包括空行和注释行。如果用 PowerShell here-string 写大文件，注意 `Get-Content | Add-Content` 会丢换行，必须用 `Get-Content -Raw` 或 `Set-Content`。
 
-### 坑 5：Codex 启动子进程用缓存的 system PATH
+### 踩坑 #5：Codex 启动子进程用缓存的 system PATH
 
-改 system 环境变量后，当前 Codex 进程内的子进程不会立即看到。需要重启 Codex。
+改 system 环境变量后，当前 Codex 进程内的子进程不会立刻看到。需要重启 Codex。
 
-### 坑 6：PowerShell 多行字符串替换复杂
+### 踩坑 #6：PowerShell 多行字符串替换复杂
 
 `-replace` 处理带特殊字符的中文文本容易失败。处理多行内容时直接用 `Set-Content` 重写整个文件更可靠。
 
-### 坑 7：MyBatis-Plus 3.5.9 删了 `PaginationInnerInterceptor`
+### 踩坑 #7：MyBatis-Plus 3.5.9 删了 `PaginationInnerInterceptor`
 
-3.5.9 的 `mybatis-plus-extension` jar 里只有 `InnerInterceptor` 接口和 `DynamicTableName/OptimisticLocker/ReplacePlaceholder` 三个实现，**没有 `PaginationInnerInterceptor`**（3.5.5 里有）。原因：3.5.9 把分页拦截器拆到独立的 `mybatis-plus-jsqlparser` 模块。
+3.5.9 的 `mybatis-plus-extension` jar 里只有 `InnerInterceptor` 接口和 `DynamicTableName/OptimisticLocker/ReplacePlaceholder` 三个实现，**没有 `PaginationInnerInterceptor`**（3.5.5 有）。原因是 3.5.9 把分页拦截器拆到独立的 `mybatis-plus-jsqlparser` 模块。
 
 **当前 workaround**：`pom.xml` 把 `mybatis-plus.version` 钉到 `3.5.5`。
 
 **长期方案**（可选）：加 `com.baomidou:mybatis-plus-jsqlparser` 依赖后升回 3.5.9。
 
-### 坑 8：Testcontainers + Docker Desktop 4.80.0 不兼容
+### 踩坑 #8：Testcontainers + Docker Desktop 4.80.0 不兼容
 
 按 T6 计划用 `@Testcontainers MinIOContainer`，但 dockerjava 客户端拿不到 `/info` 响应（空响应），容器起不来。
 
 **当前 workaround**：`MinioStorageServiceIT` 直接连 docker-compose 启动的本地 MinIO，用 `@TestPropertySource` 切到隔离 bucket `closet-it`，`@BeforeEach` 建桶 + `@AfterEach` 清对象。代码里有注释解释。
 
-### 坑 9：MyBatis-Plus `DbType` 枚举名是 `POSTGRE_SQL`（带下划线）
+### 踩坑 #9：MyBatis-Plus `DbType` 枚举名是 `POSTGRE_SQL`（带下划线）
 
-计划里写 `DbType.POSTGRE_SQL` 是对的，反编译 `mybatis-plus-annotation-3.5.5.jar` 确认。
-一开始误写 `POSTGRESQL`（无下划线）→ 编译过但运行时报 `Unresolved compilation problem: POSTGRESQL cannot be resolved`，因为 Spring Boot 用 JDT 编译器运行时校验。
+计划里写 `DbType.POSTGRE_SQL` 是对的，反编译 `mybatis-plus-annotation-3.5.5.jar` 确认。一开始误写 `POSTGRESQL`（无下划线）→ 编译过但运行时报 `Unresolved compilation problem: POSTGRESQL cannot be resolved`，因为 Spring Boot 用 JDT 编译器运行时校验。
+
+### 踩坑 #10：vitest `stubs: true` 默认不渲染 slot
+
+`global: { stubs: { 'up-checkbox-group': true, 'up-checkbox': true } }` 这种简写生成的 stub 是**纯标签占位**，不传 slot，导致父组件 `v-for="c in categories"` 渲染出的子元素全部丢失，测试断言 `expect(html).toContain('上装')` 直接挂。
+
+**正确做法**：在 `vitest.setup.ts` 里写自定义 stub 组件，用 `h()` 透传 attrs 和 slots.default：
+
+```ts
+const upCheckboxStub = defineComponent({
+  name: 'UpCheckboxStub',
+  props: ['label', 'value'],
+  setup(props, { slots }) {
+    const children = [props.label, slots.default?.()].filter(Boolean);
+    return () => h('label', { class: 'up-checkbox-stub', 'data-value': String(props.value ?? '') }, children);
+  },
+});
+config.global.components['up-checkbox'] = upCheckboxStub;
+```
+
+测试里直接 `global.stubs` 不用写，断言用 `wrapper.findAllComponents({ name: 'UpCheckboxStub' })` 或 `expect(html).toContain('xxx')`。
 
 ## 7. Subagent 派发模板
 
 派 subagent 经常卡死，建议用以下模式：
 
 1. prompt 里显式列出严格约束：
-   - 不用 `Start-Sleep`、循环等待、轮询
+   - 不用 `Start-Sleep`、循环等待、置死
    - apply_patch 每行加 `+` 前缀
    - mvn/psql/docker exec 是同步的，直接等返回
-   - 不要多轮验证
-   - 用中文报告
+   - 不要多重验证
+   - 用中文汇报
 2. model 用默认，reasoning_effort 用 `low`
 3. type 用 `worker`
 4. 3 分钟轮询
-5. 派发后自己也要独立验证（坑 1）
+5. 派发完自己也要独立验证（踩坑 #1）
 
-## 8. 工作流约定
+## 8. 工作流程约定
 
 - 分支：直接在 main 上工作（用户明确同意）
-- 提交：每 Task 一个 commit，message 用任务规格里的格式
+- 提交：每个 Task 一个 code commit，message 用任务规格里的格式；task 完成后单独一个 docs commit 更新 handoff.md（AGENTS.md 要求）
 - 用户偏好：
   - 报告用中文
   - subagent 跑的时候每 3 分钟汇报一次进度
-  - 简单任务（写静态文件）本地做更快，不用 subagent
-  - 复杂任务（多文件、编译、测试）派 subagent
-  - 每个子任务完成都更新 handoff.md（AGENTS.md 要求）
+  - 简单任务本地做更快，不用 subagent
+  - 复杂任务派 subagent
+  - 每个子任务完成都更新 handoff.md
 
 ## 9. 下一步操作
 
-**直接做 T8**，按以下顺序：
-
-1. 读 `docs/superpowers/plans/2026-07-01-digital-closet-mvp.md` 里 T8 的完整规格
-2. Clothing 比 Category/Tag 复杂：还含 image 列表 + 多对多关联（），按 TDD 顺序写测试 + 实现
-3. 完成后用 `mvn -o test` 跑测试验证
-4. commit
-
-**T10 提示**：
-- 用 `mvn` 不是 `./mvnw`
-- 实体类放 backend/src/main/java/com/closet/entity/Clothing.java
-- Mapper 接口继承 `BaseMapper<Category>`（来自 `com.baomidou.mybatisplus.core.mapper`）
-- 注意 `schema.sql` 里 `category` 表的列名（`id`, `name`, `icon`, `sort_order`, `parent_id NULLABLE`, `created_at`, `updated_at`）
-- 默认 dev profile 跑全链路 IT 会连本地 PG（容器已起）；单元测试不需要 DB
+**直接做 T28**：写 OutfitCanvas.vue + .test.ts，然后跑 vitest 验证，最后 code commit + docs commit。
 
 ## 10. 关键文件位置速查
 
@@ -269,3 +295,10 @@ Wegener、T2 Poincare 都卡在 `Start-Sleep -Seconds 30` 不返回。
 | MybatisPlus/CORS config | `backend/src/main/java/com/closet/config/` |
 | Result 测试 | `backend/src/test/java/com/closet/common/ResultTest.java` |
 | MinioStorageService IT | `backend/src/test/java/com/closet/integration/MinioStorageServiceIT.java` |
+| API client | `frontend/src/api/index.ts` |
+| API schema | `frontend/src/api/schema.d.ts` |
+| Pinia stores | `frontend/src/stores/` |
+| Frontend 组件 | `frontend/src/components/` |
+| Frontend 页面 | `frontend/src/pages/` |
+| vitest setup | `frontend/vitest.setup.ts` |
+| vitest config | `frontend/vitest.config.ts` |
