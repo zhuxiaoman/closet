@@ -1,7 +1,7 @@
 ﻿# 电子衣橱 MVP 项目状态总结（Handoff）
 
 > 用途：在新 Codex 会话中，把本文档作为背景信息粘贴进去，即可无缝接续当前进度。
-> 状态：T1-T29 已完成，T30 待开始（衣橱列表 + 衣物详情 + 衣物表单 + Vitest）
+> 状态：T1-T36 全部完成。项目 MVP 阶段结束。最终提交：746548b (T36 README)
 > 最后提交：`33e209d`（T28）
 
 ## 1. 项目概述
@@ -294,5 +294,6 @@ config.global.components['up-checkbox'] = upCheckboxStub;
 | Frontend 页面 | `frontend/src/pages/` |
 | vitest setup | `frontend/vitest.setup.ts` |
 | vitest config | `frontend/vitest.config.ts` |
+
 
 
