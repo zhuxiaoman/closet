@@ -3,63 +3,55 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "Ê×Ò³"
+				"navigationBarTitleText": "é¦–é¡µ"
 			}
 		},
 		{
 			"path": "pages/clothing-form/index",
 			"style": {
-				"navigationBarTitleText": "±à¼­ÒÂÎï"
+				"navigationBarTitleText": "ç¼–è¾‘è¡£ç‰©"
 			}
 		},
 		{
 			"path": "pages/clothing-detail/index",
 			"style": {
-				"navigationBarTitleText": "ÒÂÎïÏêÇé"
+				"navigationBarTitleText": "è¡£ç‰©è¯¦æƒ…"
 			}
 		},
 		{
 			"path": "pages/outfit-form/index",
 			"style": {
-				"navigationBarTitleText": "±à¼­´îÅä"
+				"navigationBarTitleText": "ç¼–è¾‘æ­é…"
 			}
 		},
 		{
 			"path": "pages/outfit-detail/index",
 			"style": {
-				"navigationBarTitleText": "´îÅäÏêÇé"
+				"navigationBarTitleText": "æ­é…è¯¦æƒ…"
 			}
 		},
 		{
 			"path": "pages/calendar/index",
 			"style": {
-				"navigationBarTitleText": "ÈÕÀú"
+				"navigationBarTitleText": "æ—¥å†"
 			}
 		},
 		{
 			"path": "pages/stats/index",
 			"style": {
-				"navigationBarTitleText": "Í³¼Æ"
+				"navigationBarTitleText": "ç»Ÿè®¡"
 			}
 		},
 		{
 			"path": "pages/settings/index",
 			"style": {
-				"navigationBarTitleText": "ÉèÖÃ"
-			}
-		},
-		{
-			"path": "pages/ai-generator/ai-generator",
-			"style": {
-				"navigationBarTitleText": "AI ´îÅä",
-				"navigationBarBackgroundColor": "#FFF7F2",
-				"navigationBarTextStyle": "black"
+				"navigationBarTitleText": "è®¾ç½®"
 			}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "µç×ÓÒÂ³÷",
+		"navigationBarTitleText": "ç”µå­è¡£æ©±",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#FAF6F3"
 	},
@@ -71,19 +63,19 @@
 		"list": [
 			{
 				"pagePath": "pages/index/index",
-				"text": "Ê×Ò³"
+				"text": "é¦–é¡µ"
 			},
 			{
-				"pagePath": "pages/closet/index",
-				"text": "ÒÂ³÷"
+				"pagePath": "pages/closet/closet",
+				"text": "è¡£æ©±"
 			},
 			{
-				"pagePath": "pages/outfits/index",
-				"text": "´îÅä"
+				"pagePath": "pages/outfits/outfits",
+				"text": "æ­é…"
 			},
 			{
 				"pagePath": "pages/settings/index",
-				"text": "ÎÒµÄ"
+				"text": "æˆ‘çš„"
 			}
 		]
 	}
