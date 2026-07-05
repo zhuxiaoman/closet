@@ -1,4 +1,4 @@
-package com.closet.integration;
+﻿package com.closet.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -60,6 +60,15 @@ class StatsControllerIT {
 
     @BeforeEach
     void preClean() {
+        // TRUNCATE the whole business dataset so this class is
+        // self-contained. spring.sql.init.mode=always only reseeds
+        // category/tag; clothing, outfit, wear_log, calendar_entry
+        // accumulate across runs and would otherwise skew totals
+        // assertions (e.g. overview_returns_totals_with_wear_logs).
+        // RESTART IDENTITY resets auto-increment ids; CASCADE unwinds
+        // the FK graph (wear_log -> clothing, outfit_item -> outfit
+        // and clothing, clothing_category/tag -> clothing, etc.).
+        jdbc.execute("TRUNCATE TABLE wear_log, outfit_item, clothing_category, clothing_tag, calendar_entry, outfit, clothing RESTART IDENTITY CASCADE");
         cleanup();
     }
 
@@ -161,3 +170,4 @@ class StatsControllerIT {
                 .andExpect(jsonPath("$.message").value(containsString("clothing not found")));
     }
 }
+

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
 
 interface Tag {
   id: number;
@@ -25,14 +25,16 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ 'update:modelValue': [v: number[]] }>();
 
-const selected = ref<number[]>([...(props.modelValue || [])]);
-watch(selected, (v) => emit('update:modelValue', v));
-watch(
-  () => props.modelValue,
-  (v) => {
-    selected.value = Array.isArray(v) ? [...v] : [];
-  },
-);
+// Unidirectional data flow: `selected` forwards props.modelValue.
+// The template's v-model triggers the setter on assignment -> emit ->
+// parent responds -> props.modelValue updates -> getter returns the
+// new value. The component owns no local state, which removes the
+// recursive-update warning that the previous ref + dual-watch could
+// emit during test teardown.
+const selected = computed<number[]>({
+  get: () => (Array.isArray(props.modelValue) ? props.modelValue : []),
+  set: (v) => emit('update:modelValue', Array.isArray(v) ? v : []),
+});
 
 function onChange() {
   // 占位，uView Plus 通过 v-model 自动同步内部状态
