@@ -47,6 +47,14 @@
 			"style": {
 				"navigationBarTitleText": "…Ë÷√"
 			}
+		},
+		{
+			"path": "pages/ai-generator/ai-generator",
+			"style": {
+				"navigationBarTitleText": "AI ¥Ó≈‰",
+				"navigationBarBackgroundColor": "#FFF7F2",
+				"navigationBarTextStyle": "black"
+			}
 		}
 	],
 	"globalStyle": {
