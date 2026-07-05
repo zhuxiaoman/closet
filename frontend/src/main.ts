@@ -1,6 +1,7 @@
 import { createSSRApp } from "vue";
 import uviewPlus from "uview-plus";
 import "./styles/tokens.scss";
+import "./styles/overrides.scss";
 import App from "./App.vue";
 
 export function createApp() {

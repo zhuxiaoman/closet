@@ -1,47 +1,94 @@
+// =========================================================================
+// B 樱粉燕麦 - uview-plus 主题色覆盖 (Phase 0 Task 2)
+// 这些 sass 变量会通过 vite-plugin-uni 的 additionalData 机制注入到
+// node_modules/uview-plus 组件的 <style lang="scss"> 中。
+// 必须**先于** uni.scss 内置变量定义,这样后续 uview 内部的 !default
+// 才能 fallback 到我们的樱粉色值。
+// =========================================================================
+
+// 行为相关颜色
+$u-primary: #d49aa5;
+$u-primary-dark: #b8808a;
+$u-primary-disabled: #f0d9dd;
+$u-primary-light: #fdeef0;
+
+$u-warning: #d49aa5;
+$u-warning-dark: #b8808a;
+$u-warning-disabled: #f0d9dd;
+$u-warning-light: #fdf6ec;
+
+$u-success: #7a9070;
+$u-success-dark: #687a5f;
+$u-success-disabled: #c4d0bf;
+$u-success-light: #f5fff0;
+
+$u-error: #c75d6d;
+$u-error-dark: #a8485a;
+$u-error-disabled: #e6b0b8;
+$u-error-light: #fef0f0;
+
+$u-info: #909399;
+$u-info-dark: #767a82;
+$u-info-disabled: #c4c6c9;
+$u-info-light: #f4f4f5;
+
+// 文字基本颜色
+$u-main-color: #4a3a3a;
+$u-content-color: #8a6d70;
+$u-tips-color: #b8b0b0;
+$u-light-color: #dadbde;
+$u-border-color: #f0d9dd;
+$u-bg-color: #faf6f3;
+$u-disabled-color: #c0c4cc;
+
+// =========================================================================
+// uni-app 内置变量（保持兼容 + 樱粉化）
+// =========================================================================
+
 /**
- * 这里是uni-app内置的常用样式变量
+ * uni-app 内置的常用样式变量
  *
- * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
- * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多第三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用 scss 预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过套用本站的通用主题、自定义整体风格
  *
  */
 
 /**
- * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ * 如果你是 App 开发者（插件使用方），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
  *
- * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ * 如果你的项目同样使用了 scss 预处理，你也可以直接在你的 .scss 代码中使用如下变量，同时无需 import 这个文件
  */
 
 /* 颜色变量 */
 
 /* 行为相关颜色 */
-$uni-color-primary: #007aff;
-$uni-color-success: #4cd964;
-$uni-color-warning: #f0ad4e;
-$uni-color-error: #dd524d;
+$uni-color-primary: #d49aa5;
+$uni-color-success: #7a9070;
+$uni-color-warning: #d49aa5;
+$uni-color-error: #c75d6d;
 
 /* 文字基本颜色 */
-$uni-text-color: #333; // 基本色
+$uni-text-color: #4a3a3a; // 基本色
 $uni-text-color-inverse: #fff; // 反色
-$uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
-$uni-text-color-placeholder: #808080;
-$uni-text-color-disable: #c0c0c0;
+$uni-text-color-grey: #8a6d70; // 辅助灰色，如加载更多的提示信息
+$uni-text-color-placeholder: #b8b0b0;
+$uni-text-color-disable: #c0c4cc;
 
 /* 背景颜色 */
-$uni-bg-color: #fff;
-$uni-bg-color-grey: #f8f8f8;
+$uni-bg-color: #ffffff;
+$uni-bg-color-grey: #faf6f3;
 $uni-bg-color-hover: #f1f1f1; // 点击状态颜色
 $uni-bg-color-mask: rgba(0, 0, 0, 0.4); // 遮罩颜色
 
 /* 边框颜色 */
-$uni-border-color: #c8c7cc;
+$uni-border-color: #f0d9dd;
 
 /* 尺寸变量 */
 
 /* 文字尺寸 */
 $uni-font-size-sm: 12px;
 $uni-font-size-base: 14px;
-$uni-font-size-lg: 16;
+$uni-font-size-lg: 16px;
 
 /* 图片尺寸 */
 $uni-img-size-sm: 20px;
@@ -68,9 +115,18 @@ $uni-spacing-col-lg: 12px;
 $uni-opacity-disabled: 0.3; // 组件禁用态的透明度
 
 /* 文章场景相关 */
-$uni-color-title: #2c405a; // 文章标题颜色
+$uni-color-title: #4a3a3a; // 文章标题颜色
 $uni-font-size-title: 20px;
-$uni-color-subtitle: #555; // 二级标题颜色
+$uni-color-subtitle: #8a6d70; // 二级标题颜色
 $uni-font-size-subtitle: 18px;
-$uni-color-paragraph: #3f536e; // 文章段落颜色
+$uni-color-paragraph: #4a3a3a; // 文章段落颜色
 $uni-font-size-paragraph: 15px;
+// =========================================================================
+// uview-plus 关键 mixin - 必须在 sass 变量之后定义,以便组件 @include 引用
+// =========================================================================
+@mixin flex($direction: row) {
+  /* #ifndef APP-NVUE */
+  display: flex;
+  /* #endif */
+  flex-direction: $direction;
+}

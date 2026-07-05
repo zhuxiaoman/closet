@@ -1,0 +1,105 @@
+// =========================================================================
+// B 樱粉燕麦 - uview-plus 运行时覆盖 (Phase 0 Task 2)
+// 与 uni.scss 中的 sass 变量覆盖配合使用:
+//   - uni.scss 在 sass 编译期解决"$u-primary"的硬编码引用
+//   - overrides.scss 在运行时通过 :root CSS 变量 + var() fallback 链覆盖
+//     uview-plus 内部"var(--u-primary, ...)"形式的引用
+// =========================================================================
+
+:root {
+  // uview-plus 主色 - 樱粉
+  --u-primary: #d49aa5;
+  --up-primary: #d49aa5;
+  --u-primary-dark: #b8808a;
+  --up-primary-dark: #b8808a;
+  --u-primary-disabled: #f0d9dd;
+  --up-primary-disabled: #f0d9dd;
+  --u-primary-light: #fdeef0;
+  --up-primary-light: #fdeef0;
+
+  // uview-plus 辅助状态色 - 与樱粉协调
+  --u-warning: #d49aa5;
+  --up-warning: #d49aa5;
+  --u-warning-light: #fdf6ec;
+  --up-warning-light: #fdf6ec;
+  --u-success: #7a9070;
+  --up-success: #7a9070;
+  --u-success-light: #f5fff0;
+  --up-success-light: #f5fff0;
+  --u-error: #c75d6d;
+  --up-error: #c75d6d;
+  --u-error-light: #fef0f0;
+  --up-error-light: #fef0f0;
+  --u-info: #909399;
+  --up-info: #909399;
+  --u-info-light: #f4f4f5;
+  --up-info-light: #f4f4f5;
+
+  // uview-plus 文字/边框/背景 - 樱粉燕麦
+  --u-main-color: #4a3a3a;
+  --up-main-color: #4a3a3a;
+  --u-content-color: #8a6d70;
+  --up-content-color: #8a6d70;
+  --u-tips-color: #b8b0b0;
+  --up-tips-color: #b8b0b0;
+  --u-light-color: #dadbde;
+  --up-light-color: #dadbde;
+  --u-border-color: #f0d9dd;
+  --up-border-color: #f0d9dd;
+  --u-bg-color: #faf6f3;
+  --up-bg-color: #faf6f3;
+  --u-disabled-color: #c0c4cc;
+  --up-disabled-color: #c0c4cc;
+
+  // 卡片/按钮/输入 - 樱粉燕麦调色
+  --up-card-bg-color: #f9f0ee;
+  --up-button-info-background-color: #f9f0ee;
+  --up-button-plain-background-color: #ffffff;
+}
+
+// =========================================================================
+// uview-plus 组件样式覆盖 - 利用 CSS 变量 + 局部 !important
+// =========================================================================
+
+// 按钮主色 - 樱粉
+.up-button--primary,
+.u-button--primary {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  border-radius: var(--radius-button) !important;
+}
+.up-button--primary:active,
+.up-button--primary:hover,
+.u-button--primary:active,
+.u-button--primary:hover {
+  background: var(--color-primary-hover) !important;
+  border-color: var(--color-primary-hover) !important;
+}
+
+// 卡片圆角与阴影
+.up-card,
+.u-card {
+  border-radius: var(--radius-card) !important;
+  border: 1rpx solid var(--border-color);
+  box-shadow: var(--shadow-card-soft);
+  background: var(--bg-card);
+}
+
+// 输入框 - 聚焦时主色边框
+.up-input .up-input__input,
+.u-input .u-input__input {
+  border-radius: var(--radius-input) !important;
+  border-color: var(--border-color) !important;
+  background: var(--bg-primary);
+}
+.up-input .up-input__input:focus,
+.u-input .u-input__input:focus {
+  border-color: var(--color-primary) !important;
+}
+
+// 标签栏选中态
+.uni-tabbar { border-top: 1rpx solid var(--border-color); background: #ffffff; }
+.uni-tabbar__item--active .uni-tabbar__icon,
+.uni-tabbar__item--active .uni-tabbar__label {
+  color: var(--color-primary) !important;
+}
