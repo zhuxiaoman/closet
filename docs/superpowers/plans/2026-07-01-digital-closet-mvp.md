@@ -93,7 +93,7 @@ closet/
 - Create: `README.md`
 - Create: `backend/`, `frontend/`, `deploy/` 目录
 
-- [ ] **Step 1：创建 .gitignore**
+- [x] **Step 1：创建 .gitignore**
 
 ```gitignore
 # Java / Maven
@@ -134,7 +134,7 @@ work/
 deploy/data/
 ```
 
-- [ ] **Step 2：创建 README 骨架**
+- [x] **Step 2：创建 README 骨架**
 
 ```markdown
 # 电子衣橱 MVP
@@ -161,7 +161,7 @@ deploy/data/
 参见 `deploy/docker-compose.yml`，在自己电脑上 `docker compose up -d` 即可。
 ```
 
-- [ ] **Step 3：提交**
+- [x] **Step 3：提交**
 
 ```bash
 git add .gitignore README.md
@@ -175,7 +175,7 @@ git commit -m "chore: project skeleton and gitignore"
 **Files:**
 - Create: `deploy/docker-compose.dev.yml`
 
-- [ ] **Step 1：写 docker-compose.dev.yml**
+- [x] **Step 1：写 docker-compose.dev.yml**
 
 ```yaml
 services:
@@ -232,7 +232,7 @@ volumes:
   miniodata-dev:
 ```
 
-- [ ] **Step 2：起容器并验证**
+- [x] **Step 2：起容器并验证**
 
 ```bash
 cd deploy
@@ -243,7 +243,7 @@ docker compose -f docker-compose.dev.yml ps
 
 Expected：`postgres`、`minio` 状态 healthy，`minio-init` 状态 exited(0)。
 
-- [ ] **Step 3：提交**
+- [x] **Step 3：提交**
 
 ```bash
 git add deploy/docker-compose.dev.yml
@@ -258,7 +258,7 @@ git commit -m "chore: docker compose for local dev (PG + MinIO)"
 - Create: `backend/src/main/resources/schema.sql`
 - Create: `backend/src/main/resources/data.sql`
 
-- [ ] **Step 1：写 schema.sql**
+- [x] **Step 1：写 schema.sql**
 
 ```sql
 -- 衣物分类（支持两级）
@@ -381,7 +381,7 @@ CREATE INDEX idx_wear_log_worn_at ON wear_log(worn_at);
 CREATE INDEX idx_wear_log_calendar ON wear_log(calendar_entry_id);
 ```
 
-- [ ] **Step 2：写 data.sql（默认分类）**
+- [x] **Step 2：写 data.sql（默认分类）**
 
 ```sql
 INSERT INTO category (name, parent_id, sort_order) VALUES
@@ -399,7 +399,7 @@ UNION ALL SELECT '裤子', id, 0 FROM category WHERE name = '下装' AND parent_
 UNION ALL SELECT '裙子', id, 1 FROM category WHERE name = '下装' AND parent_id IS NULL;
 ```
 
-- [ ] **Step 3：用 dev 数据库验证 schema 能执行**
+- [x] **Step 3：用 dev 数据库验证 schema 能执行**
 
 ```bash
 docker exec -i closet-pg-dev psql -U closet -d closet < backend/src/main/resources/schema.sql
@@ -409,7 +409,7 @@ docker exec closet-pg-dev psql -U closet -d closet -c "\dt"
 
 Expected：列出全部 9 张表。
 
-- [ ] **Step 4：清理并提交**
+- [x] **Step 4：清理并提交**
 
 ```bash
 docker exec closet-pg-dev psql -U closet -d closet -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
@@ -427,7 +427,7 @@ git commit -m "feat(db): schema and seed data for MVP"
 - Create: `backend/src/main/resources/application.yml`
 - Create: `backend/src/main/resources/application-dev.yml`
 
-- [ ] **Step 1：写 pom.xml**
+- [x] **Step 1：写 pom.xml**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -527,7 +527,7 @@ git commit -m "feat(db): schema and seed data for MVP"
 </project>
 ```
 
-- [ ] **Step 2：写主类**
+- [x] **Step 2：写主类**
 
 ```java
 package com.closet;
@@ -545,7 +545,7 @@ public class ClosetApplication {
 }
 ```
 
-- [ ] **Step 3：写 application.yml**
+- [x] **Step 3：写 application.yml**
 
 ```yaml
 spring:
@@ -593,7 +593,7 @@ server:
   port: 8080
 ```
 
-- [ ] **Step 4：写 application-dev.yml**
+- [x] **Step 4：写 application-dev.yml**
 
 ```yaml
 spring:
@@ -608,7 +608,7 @@ logging:
     com.closet: DEBUG
 ```
 
-- [ ] **Step 5：编译并启动验证**
+- [x] **Step 5：编译并启动验证**
 
 ```bash
 cd backend
@@ -618,7 +618,7 @@ java -jar target/closet-backend-0.1.0.jar
 
 Expected：服务在 8080 启动，日志无 ERROR。`curl http://localhost:8080/v3/api-docs` 返回 JSON。
 
-- [ ] **Step 6：提交**
+- [x] **Step 6：提交**
 
 ```bash
 git add backend/pom.xml backend/src/main/java backend/src/main/resources
@@ -635,7 +635,7 @@ git commit -m "feat(backend): spring boot project init with PG + MinIO deps"
 - Create: `backend/src/main/java/com/closet/common/GlobalExceptionHandler.java`
 - Test: `backend/src/test/java/com/closet/common/ResultTest.java`
 
-- [ ] **Step 1：写失败测试**
+- [x] **Step 1：写失败测试**
 
 ```java
 package com.closet.common;
@@ -661,7 +661,7 @@ class ResultTest {
 }
 ```
 
-- [ ] **Step 2：跑测试确认失败**
+- [x] **Step 2：跑测试确认失败**
 
 ```bash
 cd backend && ./mvnw -Dtest=ResultTest test
@@ -669,7 +669,7 @@ cd backend && ./mvnw -Dtest=ResultTest test
 
 Expected：编译错误 `Result` 类不存在。
 
-- [ ] **Step 3：写 Result.java**
+- [x] **Step 3：写 Result.java**
 
 ```java
 package com.closet.common;
@@ -702,7 +702,7 @@ public class Result<T> {
 }
 ```
 
-- [ ] **Step 4：写 ApiException 与 GlobalExceptionHandler**
+- [x] **Step 4：写 ApiException 与 GlobalExceptionHandler**
 
 `backend/src/main/java/com/closet/common/ApiException.java`
 
@@ -755,7 +755,7 @@ public class GlobalExceptionHandler {
 }
 ```
 
-- [ ] **Step 5：跑测试通过**
+- [x] **Step 5：跑测试通过**
 
 ```bash
 ./mvnw -Dtest=ResultTest test
@@ -763,7 +763,7 @@ public class GlobalExceptionHandler {
 
 Expected：2 个测试 PASS。
 
-- [ ] **Step 6：提交**
+- [x] **Step 6：提交**
 
 ```bash
 git add backend/src/main/java/com/closet/common backend/src/test/java/com/closet/common
@@ -780,7 +780,7 @@ git commit -m "feat(common): Result wrapper and global exception handler"
 - Create: `backend/src/main/java/com/closet/storage/MinioStorageService.java`
 - Test: `backend/src/test/java/com/closet/integration/MinioStorageServiceIT.java`
 
-- [ ] **Step 1：写 StorageService 接口**
+- [x] **Step 1：写 StorageService 接口**
 
 ```java
 package com.closet.storage;
@@ -793,7 +793,7 @@ public interface StorageService {
 }
 ```
 
-- [ ] **Step 2：写 MinioStorageService**
+- [x] **Step 2：写 MinioStorageService**
 
 ```java
 package com.closet.storage;
@@ -857,7 +857,7 @@ public class MinioStorageService implements StorageService {
 }
 ```
 
-- [ ] **Step 3：写 MinioConfig**
+- [x] **Step 3：写 MinioConfig**
 
 ```java
 package com.closet.config;
@@ -883,7 +883,7 @@ public class MinioConfig {
 }
 ```
 
-- [ ] **Step 4：写集成测试**
+- [x] **Step 4：写集成测试**
 
 ```java
 package com.closet.integration;
@@ -953,7 +953,7 @@ class MinioStorageServiceIT {
 }
 ```
 
-- [ ] **Step 5：跑测试确认通过**
+- [x] **Step 5：跑测试确认通过**
 
 ```bash
 cd backend
@@ -962,7 +962,7 @@ cd backend
 
 Expected：1 个测试 PASS。
 
-- [ ] **Step 6：提交**
+- [x] **Step 6：提交**
 
 ```bash
 git add backend/src/main/java/com/closet/config backend/src/main/java/com/closet/storage backend/src/test/java/com/closet/integration
@@ -977,7 +977,7 @@ git commit -m "feat(storage): MinIO storage service with Testcontainers IT"
 - Create: `backend/src/main/java/com/closet/config/MybatisPlusConfig.java`
 - Create: `backend/src/main/java/com/closet/config/CorsConfig.java`
 
-- [ ] **Step 1：写 MybatisPlusConfig**
+- [x] **Step 1：写 MybatisPlusConfig**
 
 ```java
 package com.closet.config;
@@ -1000,7 +1000,7 @@ public class MybatisPlusConfig {
 }
 ```
 
-- [ ] **Step 2：写 CorsConfig**
+- [x] **Step 2：写 CorsConfig**
 
 ```java
 package com.closet.config;
@@ -1030,7 +1030,7 @@ public class CorsConfig {
 }
 ```
 
-- [ ] **Step 3：本地启服务确认 CORS 头存在**
+- [x] **Step 3：本地启服务确认 CORS 头存在**
 
 ```bash
 cd backend && ./mvnw spring-boot:run &
@@ -1042,7 +1042,7 @@ curl -i -X OPTIONS http://localhost:8080/api/v1/categories \
 
 Expected：响应里有 `Access-Control-Allow-Origin: http://localhost:5173`。
 
-- [ ] **Step 4：提交**
+- [x] **Step 4：提交**
 
 ```bash
 git add backend/src/main/java/com/closet/config/MybatisPlusConfig.java backend/src/main/java/com/closet/config/CorsConfig.java
@@ -1066,7 +1066,7 @@ git commit -m "feat(backend): MyBatis-Plus pagination and CORS config"
 - Create: `backend/src/main/java/com/closet/dto/CategoryRequest.java`
 - Test: `backend/src/test/java/com/closet/integration/CategoryControllerIT.java`
 
-- [ ] **Step 1：写集成测试**
+- [x] **Step 1：写集成测试**
 
 ```java
 package com.closet.integration;
@@ -1139,7 +1139,7 @@ class CategoryControllerIT {
 }
 ```
 
-- [ ] **Step 2：跑测试确认失败**
+- [x] **Step 2：跑测试确认失败**
 
 ```bash
 cd backend && ./mvnw -Dtest=CategoryControllerIT test
@@ -1147,7 +1147,7 @@ cd backend && ./mvnw -Dtest=CategoryControllerIT test
 
 Expected：编译错误 `CategoryController` 类不存在。
 
-- [ ] **Step 3：写 entity**
+- [x] **Step 3：写 entity**
 
 ```java
 package com.closet.entity;
@@ -1167,7 +1167,7 @@ public class Category {
 }
 ```
 
-- [ ] **Step 4：写 mapper**
+- [x] **Step 4：写 mapper**
 
 ```java
 package com.closet.mapper;
@@ -1176,7 +1176,7 @@ import com.closet.entity.Category;
 public interface CategoryMapper extends BaseMapper<Category> {}
 ```
 
-- [ ] **Step 5：写 service 接口和实现**
+- [x] **Step 5：写 service 接口和实现**
 
 ```java
 package com.closet.service;
@@ -1196,7 +1196,7 @@ import org.springframework.stereotype.Service;
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {}
 ```
 
-- [ ] **Step 6：写 DTO 和 controller**
+- [x] **Step 6：写 DTO 和 controller**
 
 ```java
 package com.closet.dto;
@@ -1262,7 +1262,7 @@ public class CategoryController {
 }
 ```
 
-- [ ] **Step 7：跑测试确认通过**
+- [x] **Step 7：跑测试确认通过**
 
 ```bash
 ./mvnw -Dtest=CategoryControllerIT test
@@ -1270,7 +1270,7 @@ public class CategoryController {
 
 Expected：1 个测试 PASS。
 
-- [ ] **Step 8：提交**
+- [x] **Step 8：提交**
 
 ```bash
 git add backend/src
@@ -1289,23 +1289,23 @@ git commit -m "feat(category): CRUD with MyBatis-Plus"
 - Create: `backend/src/main/java/com/closet/dto/TagRequest.java`
 - Test: `backend/src/test/java/com/closet/integration/TagControllerIT.java`
 
-- [ ] **Step 1：写集成测试**（结构同 CategoryIT，路径 `/api/v1/tags`，body `{"name":"通勤"}`，断言 name 字段）
+- [x] **Step 1：写集成测试**（结构同 CategoryIT，路径 `/api/v1/tags`，body `{"name":"通勤"}`，断言 name 字段）
 
-- [ ] **Step 2：写 Tag 实体**（字段：`id`, `name`；`@TableName("tag")`）
+- [x] **Step 2：写 Tag 实体**（字段：`id`, `name`；`@TableName("tag")`）
 
-- [ ] **Step 3：写 TagMapper**（`extends BaseMapper<Tag>`）
+- [x] **Step 3：写 TagMapper**（`extends BaseMapper<Tag>`）
 
-- [ ] **Step 4：写 TagService + TagServiceImpl**（沿用 ServiceImpl 模式）
+- [x] **Step 4：写 TagService + TagServiceImpl**（沿用 ServiceImpl 模式）
 
-- [ ] **Step 5：写 TagController**（GET / POST / PUT / DELETE，CRUD 同 Category）
+- [x] **Step 5：写 TagController**（GET / POST / PUT / DELETE，CRUD 同 Category）
 
-- [ ] **Step 6：跑测试通过**
+- [x] **Step 6：跑测试通过**
 
 ```bash
 ./mvnw -Dtest=TagControllerIT test
 ```
 
-- [ ] **Step 7：提交**
+- [x] **Step 7：提交**
 
 ```bash
 git add backend/src
@@ -1327,7 +1327,7 @@ git commit -m "feat(tag): CRUD with MyBatis-Plus"
 - Create: `backend/src/main/java/com/closet/mapper/ClothingTagMapper.java`
 - Create: `backend/src/main/java/com/closet/config/MybatisMetaObjectHandler.java`
 
-- [ ] **Step 1：写 Clothing 实体**
+- [x] **Step 1：写 Clothing 实体**
 
 ```java
 package com.closet.entity;
@@ -1360,15 +1360,15 @@ public class Clothing {
 }
 ```
 
-- [ ] **Step 2：写 ClothingCategory / ClothingTag 实体**
+- [x] **Step 2：写 ClothingCategory / ClothingTag 实体**
 
 `ClothingCategory.java`：`@TableName("clothing_category")`，字段 `clothingId`（`@TableField("clothing_id")`）+ `categoryId`。
 
 `ClothingTag.java`：表名 `clothing_tag`，字段 `clothingId` + `tagId`。
 
-- [ ] **Step 3：写 mappers**（三个文件，各自 `extends BaseMapper<...>`）
+- [x] **Step 3：写 mappers**（三个文件，各自 `extends BaseMapper<...>`）
 
-- [ ] **Step 4：写元数据填充器**
+- [x] **Step 4：写元数据填充器**
 
 ```java
 package com.closet.config;
@@ -1390,7 +1390,7 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 }
 ```
 
-- [ ] **Step 5：编译验证**
+- [x] **Step 5：编译验证**
 
 ```bash
 ./mvnw compile
@@ -1398,7 +1398,7 @@ public class MybatisMetaObjectHandler implements MetaObjectHandler {
 
 Expected：BUILD SUCCESS。
 
-- [ ] **Step 6：提交**
+- [x] **Step 6：提交**
 
 ```bash
 git add backend/src/main/java/com/closet/{entity,mapper} backend/src/main/java/com/closet/config/MybatisMetaObjectHandler.java
@@ -1416,7 +1416,7 @@ git commit -m "feat(clothing): entity, mappers, and meta-object handler"
 - Create: `backend/src/main/java/com/closet/service/ClothingService.java` (+ `impl/`)
 - Test: `backend/src/test/java/com/closet/unit/ClothingServiceTest.java`
 
-- [ ] **Step 1：写 ClothingRequest DTO**
+- [x] **Step 1：写 ClothingRequest DTO**
 
 ```java
 package com.closet.dto;
@@ -1444,13 +1444,13 @@ public class ClothingRequest {
 }
 ```
 
-- [ ] **Step 2：写 ClothingFilter / ClothingResponse**
+- [x] **Step 2：写 ClothingFilter / ClothingResponse**
 
 `ClothingFilter.java`：`categoryId`, `tagId`, `season`, `status`, `keyword`, `page`, `size`（基本类型 + Lombok @Data）。
 
 `ClothingResponse.java`：在 Clothing 字段基础上加 `List<String> categories`, `List<String> tags`, `List<ClothingImage> images`。
 
-- [ ] **Step 3：写 ClothingService 接口**
+- [x] **Step 3：写 ClothingService 接口**
 
 ```java
 package com.closet.service;
@@ -1470,7 +1470,7 @@ public interface ClothingService {
 }
 ```
 
-- [ ] **Step 4：写 ClothingServiceImpl**
+- [x] **Step 4：写 ClothingServiceImpl**
 
 ```java
 package com.closet.service.impl;
@@ -1595,7 +1595,7 @@ public class ClothingServiceImpl implements ClothingService {
 }
 ```
 
-- [ ] **Step 5：写单元测试**
+- [x] **Step 5：写单元测试**
 
 ```java
 package com.closet.unit;
@@ -1656,7 +1656,7 @@ class ClothingServiceTest {
 }
 ```
 
-- [ ] **Step 6：跑测试**
+- [x] **Step 6：跑测试**
 
 ```bash
 ./mvnw -Dtest=ClothingServiceTest test
@@ -1664,7 +1664,7 @@ class ClothingServiceTest {
 
 Expected：3 个测试 PASS。
 
-- [ ] **Step 7：提交**
+- [x] **Step 7：提交**
 
 ```bash
 git add backend/src
@@ -1679,7 +1679,7 @@ git commit -m "feat(clothing): service with filter, create, update, soft delete"
 - Create: `backend/src/main/java/com/closet/controller/ClothingController.java`
 - Test: `backend/src/test/java/com/closet/integration/ClothingControllerIT.java`
 
-- [ ] **Step 1：写 controller**
+- [x] **Step 1：写 controller**
 
 ```java
 package com.closet.controller;
@@ -1732,7 +1732,7 @@ public class ClothingController {
 }
 ```
 
-- [ ] **Step 2：写集成测试**
+- [x] **Step 2：写集成测试**
 
 ```java
 package com.closet.integration;
@@ -1813,7 +1813,7 @@ class ClothingControllerIT {
 }
 ```
 
-- [ ] **Step 3：跑测试**
+- [x] **Step 3：跑测试**
 
 ```bash
 ./mvnw -Dtest=ClothingControllerIT test
@@ -1821,7 +1821,7 @@ class ClothingControllerIT {
 
 Expected：PASS。
 
-- [ ] **Step 4：提交**
+- [x] **Step 4：提交**
 
 ```bash
 git add backend/src
@@ -1840,7 +1840,7 @@ git commit -m "feat(clothing): controller with filter and CRUD"
 - Modify: `backend/src/main/java/com/closet/controller/ClothingController.java`
 - Test: `backend/src/test/java/com/closet/integration/ClothingImageIT.java`
 
-- [ ] **Step 1：写 ClothingImage 实体**
+- [x] **Step 1：写 ClothingImage 实体**
 
 ```java
 package com.closet.entity;
@@ -1861,9 +1861,9 @@ public class ClothingImage {
 }
 ```
 
-- [ ] **Step 2：写 ClothingImageMapper**（`extends BaseMapper<ClothingImage>`）
+- [x] **Step 2：写 ClothingImageMapper**（`extends BaseMapper<ClothingImage>`）
 
-- [ ] **Step 3：写 ClothingImageService**
+- [x] **Step 3：写 ClothingImageService**
 
 ```java
 package com.closet.service;
@@ -1949,7 +1949,7 @@ public class ClothingImageServiceImpl extends ServiceImpl<ClothingImageMapper, C
 }
 ```
 
-- [ ] **Step 4：在 ClothingController 里加端点**
+- [x] **Step 4：在 ClothingController 里加端点**
 
 在 ClothingController 里加：
 
@@ -1970,7 +1970,7 @@ public Result<Void> deleteImage(@PathVariable Long id, @PathVariable Long imageI
 }
 ```
 
-- [ ] **Step 5：写图片代理端点**
+- [x] **Step 5：写图片代理端点**
 
 ```java
 package com.closet.controller;
@@ -2003,7 +2003,7 @@ public class ImageController {
 }
 ```
 
-- [ ] **Step 6：写集成测试**
+- [x] **Step 6：写集成测试**
 
 ```java
 package com.closet.integration;
@@ -2074,7 +2074,7 @@ class ClothingImageIT {
 }
 ```
 
-- [ ] **Step 7：跑测试**
+- [x] **Step 7：跑测试**
 
 ```bash
 ./mvnw -Dtest=ClothingImageIT test
@@ -2082,7 +2082,7 @@ class ClothingImageIT {
 
 Expected：PASS。
 
-- [ ] **Step 8：提交**
+- [x] **Step 8：提交**
 
 ```bash
 git add backend/src
@@ -2101,7 +2101,7 @@ git commit -m "feat(clothing): image upload to MinIO and proxy download"
 - Create: `backend/src/main/java/com/closet/mapper/OutfitMapper.java`
 - Create: `backend/src/main/java/com/closet/mapper/OutfitItemMapper.java`
 
-- [ ] **Step 1：写 Outfit 实体**
+- [x] **Step 1：写 Outfit 实体**
 
 ```java
 package com.closet.entity;
@@ -2125,7 +2125,7 @@ public class Outfit {
 }
 ```
 
-- [ ] **Step 2：写 OutfitItem 实体**
+- [x] **Step 2：写 OutfitItem 实体**
 
 ```java
 package com.closet.entity;
@@ -2143,9 +2143,9 @@ public class OutfitItem {
 }
 ```
 
-- [ ] **Step 3：写两个 mapper**（各自 `extends BaseMapper<...>`）
+- [x] **Step 3：写两个 mapper**（各自 `extends BaseMapper<...>`）
 
-- [ ] **Step 4：编译 + 提交**
+- [x] **Step 4：编译 + 提交**
 
 ```bash
 ./mvnw compile
@@ -2163,7 +2163,7 @@ git commit -m "feat(outfit): entity and mappers"
 - Create: `backend/src/main/java/com/closet/service/OutfitService.java` (+ `impl/`)
 - Test: `backend/src/test/java/com/closet/unit/OutfitServiceTest.java`
 
-- [ ] **Step 1：写 OutfitRequest / OutfitResponse DTO**
+- [x] **Step 1：写 OutfitRequest / OutfitResponse DTO**
 
 ```java
 @Data
@@ -2190,7 +2190,7 @@ public class OutfitResponse {
 }
 ```
 
-- [ ] **Step 2：写 OutfitService 接口**
+- [x] **Step 2：写 OutfitService 接口**
 
 ```java
 public interface OutfitService {
@@ -2207,7 +2207,7 @@ public interface OutfitService {
 }
 ```
 
-- [ ] **Step 3：写 OutfitServiceImpl**
+- [x] **Step 3：写 OutfitServiceImpl**
 
 关键方法（伪代码示意）：
 
@@ -2251,7 +2251,7 @@ public void delete(Long id) {
 }
 ```
 
-- [ ] **Step 4：写单元测试**
+- [x] **Step 4：写单元测试**
 
 ```java
 @Test void create_persists_outfit_and_items() {
@@ -2267,7 +2267,7 @@ public void delete(Long id) {
 }
 ```
 
-- [ ] **Step 5：跑测试 + 提交**
+- [x] **Step 5：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=OutfitServiceTest test
@@ -2283,7 +2283,7 @@ git commit -m "feat(outfit): service with create, items, reorder"
 - Create: `backend/src/main/java/com/closet/controller/OutfitController.java`
 - Test: `backend/src/test/java/com/closet/integration/OutfitControllerIT.java`
 
-- [ ] **Step 1：写 controller**
+- [x] **Step 1：写 controller**
 
 ```java
 @RestController
@@ -2337,9 +2337,9 @@ public class OutfitController {
 }
 ```
 
-- [ ] **Step 2：写集成测试**（路径 `/api/v1/outfits`，先创建 2 件 clothing 再创建 outfit，最后 reorder）
+- [x] **Step 2：写集成测试**（路径 `/api/v1/outfits`，先创建 2 件 clothing 再创建 outfit，最后 reorder）
 
-- [ ] **Step 3：跑测试 + 提交**
+- [x] **Step 3：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=OutfitControllerIT test
@@ -2359,7 +2359,7 @@ git commit -m "feat(outfit): controller with CRUD and item endpoints"
 - Create: `backend/src/main/java/com/closet/controller/WearLogController.java`
 - Test: `backend/src/test/java/com/closet/integration/WearLogControllerIT.java`
 
-- [ ] **Step 1：写 WearLog 实体**
+- [x] **Step 1：写 WearLog 实体**
 
 ```java
 package com.closet.entity;
@@ -2380,9 +2380,9 @@ public class WearLog {
 }
 ```
 
-- [ ] **Step 2：写 WearLogMapper**（`extends BaseMapper<WearLog>`）
+- [x] **Step 2：写 WearLogMapper**（`extends BaseMapper<WearLog>`）
 
-- [ ] **Step 3：写 WearLogController**
+- [x] **Step 3：写 WearLogController**
 
 ```java
 @RestController
@@ -2414,9 +2414,9 @@ public class WearLogController {
 }
 ```
 
-- [ ] **Step 4：写集成测试**（创建 clothing → POST wear-log → DELETE）
+- [x] **Step 4：写集成测试**（创建 clothing → POST wear-log → DELETE）
 
-- [ ] **Step 5：跑测试 + 提交**
+- [x] **Step 5：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=WearLogControllerIT test
@@ -2435,7 +2435,7 @@ git commit -m "feat(wear-log): manual log endpoints"
 - Create: `backend/src/main/java/com/closet/service/CalendarService.java` (+ `impl/`)
 - Test: `backend/src/test/java/com/closet/unit/WearLogSyncServiceTest.java`
 
-- [ ] **Step 1：写 CalendarEntry 实体**
+- [x] **Step 1：写 CalendarEntry 实体**
 
 ```java
 package com.closet.entity;
@@ -2458,9 +2458,9 @@ public class CalendarEntry {
 }
 ```
 
-- [ ] **Step 2：写 CalendarEntryMapper**（`extends BaseMapper<CalendarEntry>`）
+- [x] **Step 2：写 CalendarEntryMapper**（`extends BaseMapper<CalendarEntry>`）
 
-- [ ] **Step 3：写 WearLogSyncService 接口和实现**
+- [x] **Step 3：写 WearLogSyncService 接口和实现**
 
 ```java
 public interface WearLogSyncService {
@@ -2505,7 +2505,7 @@ public class WearLogSyncServiceImpl implements WearLogSyncService {
 }
 ```
 
-- [ ] **Step 4：写 WearLogSyncService 单元测试**
+- [x] **Step 4：写 WearLogSyncService 单元测试**
 
 ```java
 class WearLogSyncServiceTest {
@@ -2539,7 +2539,7 @@ class WearLogSyncServiceTest {
 }
 ```
 
-- [ ] **Step 5：写 CalendarService**
+- [x] **Step 5：写 CalendarService**
 
 ```java
 public interface CalendarService {
@@ -2603,7 +2603,7 @@ public class CalendarServiceImpl implements CalendarService {
 }
 ```
 
-- [ ] **Step 6：跑测试 + 提交**
+- [x] **Step 6：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=WearLogSyncServiceTest test
@@ -2619,7 +2619,7 @@ git commit -m "feat(calendar): entity, service with WearLogSyncService"
 - Create: `backend/src/main/java/com/closet/controller/CalendarController.java`
 - Test: `backend/src/test/java/com/closet/integration/CalendarControllerIT.java`
 
-- [ ] **Step 1：写 controller**
+- [x] **Step 1：写 controller**
 
 ```java
 @RestController
@@ -2654,9 +2654,9 @@ public class CalendarController {
 }
 ```
 
-- [ ] **Step 2：写集成测试**（创建 outfit + clothing → POST calendar → GET range → PUT → DELETE）
+- [x] **Step 2：写集成测试**（创建 outfit + clothing → POST calendar → GET range → PUT → DELETE）
 
-- [ ] **Step 3：跑测试 + 提交**
+- [x] **Step 3：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=CalendarControllerIT test
@@ -2676,7 +2676,7 @@ git commit -m "feat(calendar): controller"
 - Create: `backend/src/main/java/com/closet/service/StatsService.java` (+ `impl/`)
 - Test: `backend/src/test/java/com/closet/unit/StatsServiceTest.java`
 
-- [ ] **Step 1：写 DTO**
+- [x] **Step 1：写 DTO**
 
 ```java
 @Data public class StatsOverview {
@@ -2695,7 +2695,7 @@ git commit -m "feat(calendar): controller"
 }
 ```
 
-- [ ] **Step 2：写 StatsService 接口**
+- [x] **Step 2：写 StatsService 接口**
 
 ```java
 public interface StatsService {
@@ -2706,7 +2706,7 @@ public interface StatsService {
 }
 ```
 
-- [ ] **Step 3：写 StatsServiceImpl**
+- [x] **Step 3：写 StatsServiceImpl**
 
 ```java
 @Service
@@ -2787,9 +2787,9 @@ public class StatsServiceImpl implements StatsService {
 }
 ```
 
-- [ ] **Step 4：写单元测试**（用 Mockito mock mappers，断言 overview/forClothing 的字段）
+- [x] **Step 4：写单元测试**（用 Mockito mock mappers，断言 overview/forClothing 的字段）
 
-- [ ] **Step 5：跑测试 + 提交**
+- [x] **Step 5：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=StatsServiceTest test
@@ -2805,7 +2805,7 @@ git commit -m "feat(stats): service with overview, per-item, most/least worn"
 - Create: `backend/src/main/java/com/closet/controller/StatsController.java`
 - Test: `backend/src/test/java/com/closet/integration/StatsControllerIT.java`
 
-- [ ] **Step 1：写 controller**
+- [x] **Step 1：写 controller**
 
 ```java
 @RestController
@@ -2834,9 +2834,9 @@ public class StatsController {
 }
 ```
 
-- [ ] **Step 2：写集成测试**（创建 clothing → POST wear-log → GET overview 验证 monthWears >= 1）
+- [x] **Step 2：写集成测试**（创建 clothing → POST wear-log → GET overview 验证 monthWears >= 1）
 
-- [ ] **Step 3：跑测试 + 提交**
+- [x] **Step 3：跑测试 + 提交**
 
 ```bash
 ./mvnw -Dtest=StatsControllerIT test
@@ -2853,7 +2853,7 @@ git commit -m "feat(stats): controller"
 **Files:**
 - Create: `frontend/` (使用 uni-app Vue 3 + Vite + TS 模板)
 
-- [ ] **Step 1：用 CLI 创建项目**
+- [x] **Step 1：用 CLI 创建项目**
 
 ```bash
 cd frontend
@@ -2863,7 +2863,7 @@ npm install
 npm install -D uview-plus vitest @vue/test-utils happy-dom jsdom
 ```
 
-- [ ] **Step 2：配置 uView Plus**
+- [x] **Step 2：配置 uView Plus**
 
 按 uview-plus 官方文档（`https://uiadmin.net/uview-plus/`）修改 `main.ts` 引入。
 
@@ -2882,7 +2882,7 @@ export function createApp() {
 
 并在 `App.vue` 的 `<style lang="scss">` 里 `@import "uview-plus/index.scss";`
 
-- [ ] **Step 3：配置 vite.config.ts 加代理**
+- [x] **Step 3：配置 vite.config.ts 加代理**
 
 ```ts
 import { defineConfig } from 'vite';
@@ -2902,14 +2902,14 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 4：本地跑起来确认**
+- [x] **Step 4：本地跑起来确认**
 
 ```bash
 npm run dev:h5
 # 浏览器访问 http://localhost:5173
 ```
 
-- [ ] **Step 5：提交**
+- [x] **Step 5：提交**
 
 ```bash
 git add frontend
@@ -2923,7 +2923,7 @@ git commit -m "feat(frontend): uni-app init with uView Plus"
 **Files:**
 - Create: `frontend/src/api/`，自动生成
 
-- [ ] **Step 1：确认后端 OpenAPI 文档可访问**
+- [x] **Step 1：确认后端 OpenAPI 文档可访问**
 
 ```bash
 curl http://localhost:8080/v3/api-docs | head -c 200
@@ -2931,14 +2931,14 @@ curl http://localhost:8080/v3/api-docs | head -c 200
 
 Expected：返回 JSON。
 
-- [ ] **Step 2：安装 openapi-typescript 并生成**
+- [x] **Step 2：安装 openapi-typescript 并生成**
 
 ```bash
 npm install -D openapi-typescript
 npx openapi-typescript http://localhost:8080/v3/api-docs --output src/api/schema.d.ts
 ```
 
-- [ ] **Step 3：写 API 请求封装**
+- [x] **Step 3：写 API 请求封装**
 
 ```ts
 // src/api/index.ts
@@ -2969,7 +2969,7 @@ export const api = {
 };
 ```
 
-- [ ] **Step 4：提交**
+- [x] **Step 4：提交**
 
 ```bash
 git add frontend/src/api
@@ -2986,7 +2986,7 @@ git commit -m "feat(frontend): OpenAPI client and API wrapper"
 - Create: `frontend/src/stores/calendar.ts`
 - Create: `frontend/src/pages.json`（路由）
 
-- [ ] **Step 1：写 clothing store（其它 store 按同样模式）**
+- [x] **Step 1：写 clothing store（其它 store 按同样模式）**
 
 ```ts
 // src/stores/clothing.ts
@@ -3008,7 +3008,7 @@ export const useClothingStore = defineStore('clothing', () => {
 });
 ```
 
-- [ ] **Step 2：配置 pages.json**
+- [x] **Step 2：配置 pages.json**
 
 ```json
 {
@@ -3027,7 +3027,7 @@ export const useClothingStore = defineStore('clothing', () => {
 }
 ```
 
-- [ ] **Step 3：提交**
+- [x] **Step 3：提交**
 
 ```bash
 git add frontend
@@ -3044,7 +3044,7 @@ git commit -m "feat(frontend): pinia stores and routing"
 - Create: `frontend/src/components/ClothingCard.vue`
 - Test: `frontend/src/components/ClothingCard.test.ts`
 
-- [ ] **Step 1：写失败测试**
+- [x] **Step 1：写失败测试**
 
 ```ts
 import { mount } from '@vue/test-utils';
@@ -3071,7 +3071,7 @@ describe('ClothingCard', () => {
 });
 ```
 
-- [ ] **Step 2：跑测试确认失败**
+- [x] **Step 2：跑测试确认失败**
 
 ```bash
 cd frontend && npx vitest run src/components/ClothingCard.test.ts
@@ -3079,7 +3079,7 @@ cd frontend && npx vitest run src/components/ClothingCard.test.ts
 
 Expected：FAIL（文件不存在）。
 
-- [ ] **Step 3：实现组件**
+- [x] **Step 3：实现组件**
 
 ```vue
 <template>
@@ -3111,7 +3111,7 @@ const imgSrc = computed(() => {
 </style>
 ```
 
-- [ ] **Step 4：跑测试通过 + 提交**
+- [x] **Step 4：跑测试通过 + 提交**
 
 ```bash
 npx vitest run src/components/ClothingCard.test.ts
@@ -3127,7 +3127,7 @@ git commit -m "feat(frontend): ClothingCard with image fallback"
 - Create: `frontend/src/components/ImageUploader.vue`
 - Test: `frontend/src/components/ImageUploader.test.ts`
 
-- [ ] **Step 1：写失败测试**
+- [x] **Step 1：写失败测试**
 
 ```ts
 import { mount } from '@vue/test-utils';
@@ -3149,7 +3149,7 @@ describe('ImageUploader', () => {
 });
 ```
 
-- [ ] **Step 2：实现组件**
+- [x] **Step 2：实现组件**
 
 ```vue
 <template>
@@ -3201,7 +3201,7 @@ async function choose() {
 </script>
 ```
 
-- [ ] **Step 3：跑测试 + 提交**
+- [x] **Step 3：跑测试 + 提交**
 
 ```bash
 npx vitest run src/components/ImageUploader.test.ts
@@ -3220,7 +3220,7 @@ git commit -m "feat(frontend): ImageUploader with MP-WEIXIN and H5 branches"
 - Test: `frontend/src/components/FilterBar.test.ts`
 - Test: `frontend/src/components/CategoryPicker.test.ts`
 
-- [ ] **Step 1：写 FilterBar 失败测试**
+- [x] **Step 1：写 FilterBar 失败测试**
 
 ```ts
 import { mount } from '@vue/test-utils';
@@ -3235,7 +3235,7 @@ describe('FilterBar', () => {
 });
 ```
 
-- [ ] **Step 2：实现 FilterBar**
+- [x] **Step 2：实现 FilterBar**
 
 ```vue
 <template>
@@ -3265,7 +3265,7 @@ function onSeason(e: any) {
 </script>
 ```
 
-- [ ] **Step 3：实现 CategoryPicker / TagPicker**
+- [x] **Step 3：实现 CategoryPicker / TagPicker**
 
 两个组件都是 uView Plus 的 `up-checkbox-group` 包装，传入选项数组，emit change。
 
@@ -3290,7 +3290,7 @@ function onChange() {}
 </script>
 ```
 
-- [ ] **Step 4：跑测试 + 提交**
+- [x] **Step 4：跑测试 + 提交**
 
 ```bash
 npx vitest run src/components
@@ -3306,7 +3306,7 @@ git commit -m "feat(frontend): FilterBar, CategoryPicker, TagPicker"
 - Create: `frontend/src/components/OutfitCanvas.vue`
 - Test: `frontend/src/components/OutfitCanvas.test.ts`
 
-- [ ] **Step 1：写失败测试**
+- [x] **Step 1：写失败测试**
 
 ```ts
 import { mount } from '@vue/test-utils';
@@ -3337,7 +3337,7 @@ describe('OutfitCanvas', () => {
 });
 ```
 
-- [ ] **Step 2：实现组件**
+- [x] **Step 2：实现组件**
 
 ```vue
 <template>
@@ -3356,7 +3356,7 @@ const sorted = computed(() => [...props.items].sort((a, b) => (a.sortOrder ?? 0)
 </script>
 ```
 
-- [ ] **Step 3：跑测试 + 提交**
+- [x] **Step 3：跑测试 + 提交**
 
 ```bash
 npx vitest run src/components/OutfitCanvas.test.ts
@@ -3373,7 +3373,7 @@ git commit -m "feat(frontend): OutfitCanvas with sort-by-order"
 **Files:**
 - Create: `frontend/src/pages/index/index.vue`
 
-- [ ] **Step 1：写页面**
+- [x] **Step 1：写页面**
 
 ```vue
 <template>
@@ -3401,9 +3401,9 @@ function go(url: string) { uni.navigateTo({ url }); }
 </script>
 ```
 
-- [ ] **Step 2：本地验证**（npm run dev:h5 后访问首页能看到统计数字）
+- [x] **Step 2：本地验证**（npm run dev:h5 后访问首页能看到统计数字）
 
-- [ ] **Step 3：提交**
+- [x] **Step 3：提交**
 
 ```bash
 git add frontend/src/pages/index
@@ -3419,7 +3419,7 @@ git commit -m "feat(frontend): home page with stats overview"
 - Create: `frontend/src/pages/clothing-detail/index.vue`
 - Create: `frontend/src/pages/clothing-form/index.vue`
 
-- [ ] **Step 1：写 closet/index.vue（列表 + 筛选）**
+- [x] **Step 1：写 closet/index.vue（列表 + 筛选）**
 
 ```vue
 <template>
@@ -3459,7 +3459,7 @@ function goForm() { uni.navigateTo({ url: '/pages/clothing-form/index' }); }
 </style>
 ```
 
-- [ ] **Step 2：写 clothing-form/index.vue**
+- [x] **Step 2：写 clothing-form/index.vue**
 
 字段：name, brand, colorPrimary, colorSecondary, size, purchasePrice, purchaseDate, season, notes, categoryIds, tagIds，外加 `<ImageUploader :clothing-id="id" :images="images" />`。
 
@@ -3477,11 +3477,11 @@ async function submit() {
 }
 ```
 
-- [ ] **Step 3：写 clothing-detail/index.vue**
+- [x] **Step 3：写 clothing-detail/index.vue**
 
 拉详情展示。
 
-- [ ] **Step 4：本地跑 + 提交**
+- [x] **Step 4：本地跑 + 提交**
 
 ```bash
 npm run dev:h5
@@ -3499,7 +3499,7 @@ git commit -m "feat(frontend): closet pages"
 - Create: `frontend/src/pages/outfit-detail/index.vue`
 - Create: `frontend/src/pages/outfit-form/index.vue`
 
-- [ ] **Step 1：写 outfit-form/index.vue**
+- [x] **Step 1：写 outfit-form/index.vue**
 
 字段：name, description, occasion, season, isFavorite，加一个 OutfitCanvas 编辑区。
 
@@ -3514,11 +3514,11 @@ async function submit() {
 }
 ```
 
-- [ ] **Step 2：写详情 + 列表**
+- [x] **Step 2：写详情 + 列表**
 
 详情页加「分享」按钮：调 `<canvas>` 离屏渲染 OutfitCanvas，调 `uni.canvasToTempFilePath` 出图，然后 `uni.share`（H5）或 `wx.shareAppMessage`（微信）。
 
-- [ ] **Step 3：本地跑 + 提交**
+- [x] **Step 3：本地跑 + 提交**
 
 ```bash
 npm run dev:h5
@@ -3533,7 +3533,7 @@ git commit -m "feat(frontend): outfit pages with share"
 **Files:**
 - Create: `frontend/src/pages/calendar/index.vue`
 
-- [ ] **Step 1：写页面**
+- [x] **Step 1：写页面**
 
 ```vue
 <template>
@@ -3581,7 +3581,7 @@ onMounted(load);
 </script>
 ```
 
-- [ ] **Step 2：本地跑 + 提交**
+- [x] **Step 2：本地跑 + 提交**
 
 ```bash
 git add frontend/src/pages/calendar
@@ -3596,15 +3596,15 @@ git commit -m "feat(frontend): calendar page"
 - Create: `frontend/src/pages/stats/index.vue`
 - Create: `frontend/src/pages/settings/index.vue`
 
-- [ ] **Step 1：写 stats/index.vue**
+- [x] **Step 1：写 stats/index.vue**
 
 四个卡片：总览 / 最常穿 / 最少穿。点击衣物跳详情。
 
-- [ ] **Step 2：写 settings/index.vue**
+- [x] **Step 2：写 settings/index.vue**
 
 管理分类、标签（CRUD 列表 + 新增按钮）；底部加「数据导出」按钮（暂留空，调用 `GET /api/v1/clothing` 把所有数据 JSON 下载即可）。
 
-- [ ] **Step 3：本地跑 + 提交**
+- [x] **Step 3：本地跑 + 提交**
 
 ```bash
 git add frontend/src/pages/stats frontend/src/pages/settings
@@ -3620,7 +3620,7 @@ git commit -m "feat(frontend): stats and settings pages"
 **Files:**
 - Create: `backend/Dockerfile`
 
-- [ ] **Step 1：写 Dockerfile（多阶段构建）**
+- [x] **Step 1：写 Dockerfile（多阶段构建）**
 
 ```dockerfile
 # 构建阶段
@@ -3641,7 +3641,7 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 ```
 
-- [ ] **Step 2：本地构建验证**
+- [x] **Step 2：本地构建验证**
 
 ```bash
 cd backend
@@ -3650,7 +3650,7 @@ docker build -t closet-backend:dev .
 
 Expected：构建成功，镜像大小约 250-300 MB。
 
-- [ ] **Step 3：提交**
+- [x] **Step 3：提交**
 
 ```bash
 git add backend/Dockerfile
@@ -3664,7 +3664,7 @@ git commit -m "chore(backend): multi-stage Dockerfile"
 **Files:**
 - Create: `deploy/docker-compose.yml`
 
-- [ ] **Step 1：写 compose**
+- [x] **Step 1：写 compose**
 
 ```yaml
 services:
@@ -3741,7 +3741,7 @@ volumes:
   miniodata:
 ```
 
-- [ ] **Step 2：写 application-prod.yml**（在 backend/src/main/resources/）
+- [x] **Step 2：写 application-prod.yml**（在 backend/src/main/resources/）
 
 ```yaml
 spring:
@@ -3756,7 +3756,7 @@ minio:
   bucket: ${MINIO_BUCKET}
 ```
 
-- [ ] **Step 3：写 .env.example**（用户复制成 .env）
+- [x] **Step 3：写 .env.example**（用户复制成 .env）
 
 ```
 DB_PASSWORD=change-me-strong-password
@@ -3764,7 +3764,7 @@ MINIO_USER=closet
 MINIO_PASSWORD=change-me-strong-secret
 ```
 
-- [ ] **Step 4：起生产栈 + 烟测**
+- [x] **Step 4：起生产栈 + 烟测**
 
 ```bash
 cd deploy
@@ -3777,7 +3777,7 @@ curl http://localhost:8080/api/v1/categories
 
 Expected：返回 `{"code":0,"message":"ok","data":[{...默认分类...}]}`。
 
-- [ ] **Step 5：提交**
+- [x] **Step 5：提交**
 
 ```bash
 git add deploy/docker-compose.yml backend/src/main/resources/application-prod.yml deploy/.env.example
@@ -3791,7 +3791,7 @@ git commit -m "chore(deploy): production docker compose"
 **Files:**
 - Modify: `README.md`
 
-- [ ] **Step 1：完善 README**
+- [x] **Step 1：完善 README**
 
 ```markdown
 # 电子衣橱 MVP
@@ -3862,11 +3862,11 @@ docker run --rm -v closet_pgdata:/data -v $PWD:/backup alpine tar czf /backup/pg
 仅个人使用。
 ```
 
-- [ ] **Step 2：完整烟测一遍**
+- [x] **Step 2：完整烟测一遍**
 
 起 dev stack → 录入 3 件衣物 → 创建 1 个搭配 → 安排到今天 → 查统计 → 看 cost-per-wear 是否对。
 
-- [ ] **Step 3：提交**
+- [x] **Step 3：提交**
 
 ```bash
 git add README.md
@@ -3877,15 +3877,15 @@ git commit -m "docs: full README with dev and prod instructions"
 
 ## 验收清单（全部任务完成后逐项打勾）
 
-- [ ] `cd deploy && docker compose -f docker-compose.dev.yml up -d` 起得来
-- [ ] `cd backend && ./mvnw test` 全部 PASS（service 层 ≥ 80% 覆盖率）
-- [ ] `cd frontend && npx vitest run` 全部 PASS
-- [ ] `npm run dev:h5` 能看到首页统计
-- [ ] 录入衣物 → 上传图片 → 列表显示
-- [ ] 创建搭配 → 在日历里安排 → 统计页 cost-per-wear 数字正确
-- [ ] 搭配详情点分享能生成图片
-- [ ] `cd deploy && docker compose up -d --build` 生产栈跑起来
-- [ ] `.env` 真实密码填入后所有服务健康
+- [x] `cd deploy && docker compose -f docker-compose.dev.yml up -d` 起得来
+- [x] `cd backend && ./mvnw test` 全部 PASS（service 层 ≥ 80% 覆盖率）
+- [x] `cd frontend && npx vitest run` 全部 PASS
+- [x] `npm run dev:h5` 能看到首页统计
+- [x] 录入衣物 → 上传图片 → 列表显示
+- [x] 创建搭配 → 在日历里安排 → 统计页 cost-per-wear 数字正确
+- [x] 搭配详情点分享能生成图片
+- [x] `cd deploy && docker compose up -d --build` 生产栈跑起来
+- [x] `.env` 真实密码填入后所有服务健康
 
 ## 关键经验教训（写给未来的自己）
 
