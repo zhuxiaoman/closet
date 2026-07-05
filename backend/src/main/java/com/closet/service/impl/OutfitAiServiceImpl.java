@@ -9,6 +9,9 @@ import com.closet.entity.OutfitAiGeneration;
 import com.closet.mapper.ClothingMapper;
 import com.closet.mapper.OutfitAiGenerationMapper;
 import com.closet.service.OutfitAiService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +44,11 @@ import java.util.stream.Collectors;
  *       return the new id alongside the 5 outfits.</li>
  * </ol>
  *
- * <p>Color harmony is currently delegated to {@code ColorHarmonyEngine}
- * downstream; future work can score each candidate before storage.
+ * <p>JSON columns (seedClothingIds / resultOutfitIds) are stored as
+ * plain VARCHAR via {@link ObjectMapper}. MyBatis-Plus 3.5.5 with
+ * JacksonTypeHandler does not auto-cast to PG jsonb so we keep the
+ * JSON shape ourselves; this also makes the column opaque for v2.1
+ * analytics helpers.
  */
 @Service
 @RequiredArgsConstructor
@@ -55,6 +61,7 @@ public class OutfitAiServiceImpl implements OutfitAiService {
 
     private final ClothingMapper clothingMapper;
     private final OutfitAiGenerationMapper aiMapper;
+    private final ObjectMapper objectMapper;
 
     @Override
     public AiGenerateResponse generate(AiGenerateRequest req) {
@@ -64,11 +71,9 @@ public class OutfitAiServiceImpl implements OutfitAiService {
         }
         List<Long> seedIds = req.getSeedClothingIds();
 
-        // 1. Pull the active closet. season='all' is always in scope; a
-        //    requested season is added OR'd. We pull just status='active'
-        //    from SQL (cheap) and apply the season filter in-memory so
-        //    unit tests can mock the wider pool without having to fake
-        //    QueryWrapper SQL parsing.
+        // 1. Pull active closet from SQL. Season filter happens in
+        //    memory so unit tests can mock the wider pool without
+        //    faking QueryWrapper SQL parsing.
         List<Clothing> pool = clothingMapper.selectList(activeOnlyQuery());
         if (pool == null) {
             pool = Collections.emptyList();
@@ -138,12 +143,12 @@ public class OutfitAiServiceImpl implements OutfitAiService {
             outfits.add(new ArrayList<>(raw.get(0)));
         }
 
-        // 6. Persist generation row.
+        // 6. Persist generation row. JSON columns are written as strings.
         OutfitAiGeneration gen = new OutfitAiGeneration();
-        gen.setSeedClothingIds(new ArrayList<>(resolvedSeedIds));
+        gen.setSeedClothingIds(toJson(resolvedSeedIds));
         gen.setOccasion(req.getOccasion());
         gen.setSeason(req.getSeason());
-        gen.setResultOutfitIds(outfits);
+        gen.setResultOutfitIds(toJson(outfits));
         gen.setFeedback("none");
         aiMapper.insert(gen);
 
@@ -175,5 +180,25 @@ public class OutfitAiServiceImpl implements OutfitAiService {
         QueryWrapper<Clothing> q = new QueryWrapper<>();
         q.eq("status", "active");
         return q;
+    }
+
+    private String toJson(Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException ex) {
+            throw new ApiException(500, "failed to serialize JSON column: " + ex.getMessage());
+        }
+    }
+
+    /** Convenience for tests / future readers. */
+    List<Long> parseSeedIds(String json) {
+        if (json == null || json.isBlank()) {
+            return Collections.emptyList();
+        }
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<Long>>() {});
+        } catch (JsonProcessingException ex) {
+            throw new ApiException(500, "failed to parse seed ids: " + ex.getMessage());
+        }
     }
 }

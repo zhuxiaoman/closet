@@ -8,6 +8,7 @@ import com.closet.entity.OutfitAiGeneration;
 import com.closet.mapper.ClothingMapper;
 import com.closet.mapper.OutfitAiGenerationMapper;
 import com.closet.service.impl.OutfitAiServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,10 +32,11 @@ import static org.mockito.Mockito.when;
 
 /**
  * Pure unit test for {@link OutfitAiServiceImpl}. Both mappers are
- * mocked so the test stays fast and database-free. The four cases
- * mirror the plan's safety net: count guarantee, season filter,
- * outfit uniqueness, seed inclusion. Plus a feedback round-trip
- * for the second public method.
+ * mocked and an {@link ObjectMapper} is wired directly so the test
+ * stays fast and database-free. The four cases mirror the plan's
+ * safety net: count guarantee, season filter, outfit uniqueness,
+ * seed inclusion. Plus a feedback round-trip for the second public
+ * method.
  */
 class OutfitAiServiceTest {
 
@@ -46,7 +48,7 @@ class OutfitAiServiceTest {
     void setUp() {
         clothingMapper = mock(ClothingMapper.class);
         aiMapper = mock(OutfitAiGenerationMapper.class);
-        service = new OutfitAiServiceImpl(clothingMapper, aiMapper);
+        service = new OutfitAiServiceImpl(clothingMapper, aiMapper, new ObjectMapper());
 
         // Stub insert() so the persisted entity gains an id, mirroring
         // MyBatis-Plus AUTO behaviour.
@@ -155,7 +157,7 @@ class OutfitAiServiceTest {
     }
 
     @Test
-    void 持久化会把生成结果写到表里() {
+    void 持久化会把生成结果写到表里() throws Exception {
         when(clothingMapper.selectList(any())).thenReturn(List.of(
                 mk(1L, "summer", "#ffffff"),
                 mk(2L, "summer", "#a8c8d8")
@@ -175,10 +177,16 @@ class OutfitAiServiceTest {
         assertEquals("casual", saved.getOccasion());
         assertEquals("summer", saved.getSeason());
         assertEquals("none", saved.getFeedback());
-        assertNotNull(saved.getSeedClothingIds());
-        assertTrue(saved.getSeedClothingIds().contains(1L));
-        assertNotNull(saved.getResultOutfitIds());
-        assertEquals(5, saved.getResultOutfitIds().size());
+
+        // JSON columns: seed ids parse back to a list containing 1.
+        ObjectMapper m = new ObjectMapper();
+        List<Long> seeds = m.readValue(saved.getSeedClothingIds(),
+                new com.fasterxml.jackson.core.type.TypeReference<List<Long>>() {});
+        assertTrue(seeds.contains(1L), "persisted seed should contain id 1, got " + seeds);
+
+        List<List<Long>> outfits = m.readValue(saved.getResultOutfitIds(),
+                new com.fasterxml.jackson.core.type.TypeReference<List<List<Long>>>() {});
+        assertEquals(5, outfits.size());
     }
 
     @Test
