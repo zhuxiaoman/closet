@@ -50,7 +50,7 @@ v2 在不动 MVP 数据模型核心、不引入多用户体系的前提下，做
 | 状态 - 警告 | `#d49aa5` | 提醒、未保存 |
 | 状态 - 错误 | `#c75d6d` | 错误、删除 |
 
-色卡见：[`.superpowers/brainstorm/2060-1783237748/content/04-warm-palette-options.html`](../../.superpowers/brainstorm/2060-1783237748/content/04-warm-palette-options.html)
+色卡见：[`.superpowers/brainstorm/2060-1783237748/content/04-warm-palette-options.html`](../../../.superpowers/brainstorm/2060-1783237748/content/04-warm-palette-options.html)
 
 ### 2.2 字体
 
@@ -152,7 +152,7 @@ v2 在不动 MVP 数据模型核心、不引入多用户体系的前提下，做
 └── 数据导出
 ```
 
-页面树可视化：[`.superpowers/brainstorm/.../content/07-info-architecture.html`](../../.superpowers/brainstorm/2060-1783237748/content/07-info-architecture.html)
+页面树可视化：[`.superpowers/brainstorm/2060-1783237748/content/07-info-architecture.html`](../../../.superpowers/brainstorm/2060-1783237748/content/07-info-architecture.html)
 
 ## 4. 功能范围
 
@@ -496,12 +496,12 @@ App 启动密码锁。
 
 | 类型 | 内容 | 位置 |
 |---|---|---|
-| 原型图（低保真） | 4 种视觉风格对比 | `.superpowers/brainstorm/.../content/01-visual-style.html` |
-| UI 图（中保真） | B 风格首页 + 衣橱页 + 搭配页 | `.superpowers/brainstorm/.../content/02-visual-style-mockups.html` |
-| UI 图（带图标） | B + 图标版三屏 | `.superpowers/brainstorm/.../content/03-visual-style-warm-icons.html` |
-| 配色方案 | 4 种白色基底配色对比 | `.superpowers/brainstorm/.../content/04-warm-palette-options.html` |
-| 信息架构图 | sitemap + 导航结构 | `.superpowers/brainstorm/.../content/07-info-architecture.html` |
-| 关键页 UI 原型 | 4 个新功能核心页面 | `.superpowers/brainstorm/.../content/08-v2-key-features.html` |
+| 原型图（低保真） | 4 种视觉风格对比 | [01-visual-style.html](../../../.superpowers/brainstorm/2060-1783237748/content/01-visual-style.html) |
+| UI 图（中保真） | B 风格首页 + 衣橱页 + 搭配页 | [02-visual-style-mockups.html](../../../.superpowers/brainstorm/2060-1783237748/content/02-visual-style-mockups.html) |
+| UI 图（带图标） | B + 图标版三屏 | [03-visual-style-warm-icons.html](../../../.superpowers/brainstorm/2060-1783237748/content/03-visual-style-warm-icons.html) |
+| 配色方案 | 4 种白色基底配色对比 | [04-warm-palette-options.html](../../../.superpowers/brainstorm/2060-1783237748/content/04-warm-palette-options.html) |
+| 信息架构图 | sitemap + 导航结构 | [07-info-architecture.html](../../../.superpowers/brainstorm/2060-1783237748/content/07-info-architecture.html) |
+| 关键页 UI 原型 | 4 个新功能核心页面 | [08-v2-key-features.html](../../../.superpowers/brainstorm/2060-1783237748/content/08-v2-key-features.html) |
 | 视觉伴侣 URL | http://localhost:51392 | 实时访问 |
 
 ### 10.2 实施交付（下个阶段）
