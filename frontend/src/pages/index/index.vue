@@ -23,12 +23,23 @@
       <up-button class="btn-primary" @click="goCloset">打开衣橱</up-button>
       <up-button class="btn-secondary" @click="goCalendar">打开日历</up-button>
     </view>
+
+    <!-- AI 搭配入口：樱粉渐变卡片，点击进入 ai-generator 页面 -->
+    <view class="ai-cta" data-test="ai-cta" @click="goAi">
+      <Icon name="sparkles" :size="36" color="#ffffff" />
+      <view class="ai-cta-text">
+        <text class="ai-title">AI 搭配助手</text>
+        <text class="ai-sub">挑件单品，生成 5 套方案</text>
+      </view>
+      <Icon name="chevron-right" :size="28" color="rgba(255,255,255,0.85)" />
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { api } from "../../api";
+import Icon from "@/components/Icon.vue";
 
 interface StatsOverview {
   totalClothing: number;
@@ -63,6 +74,11 @@ function goCloset() {
 
 function goCalendar() {
   uni.navigateTo({ url: "/pages/calendar/index" });
+}
+
+function goAi() {
+  // 跳到 AI 搭配生成器页（tabBar tab 入口，独立路径）
+  uni.navigateTo({ url: "/pages/ai-generator/ai-generator" });
 }
 </script>
 
@@ -124,5 +140,40 @@ function goCalendar() {
   border-color: var(--border-color) !important;
   color: var(--color-primary) !important;
   border-radius: var(--radius-button) !important;
+}
+
+/* AI 搭配入口：樱粉渐变卡片 */
+.ai-cta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx;
+  border-radius: 24rpx;
+  margin-top: 8rpx;
+  background: linear-gradient(
+    135deg,
+    var(--accent-soft, #fdeef0),
+    var(--accent, #d49aa5)
+  );
+  color: #ffffff;
+  box-shadow: var(--shadow-card-soft);
+}
+
+.ai-cta-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--accent-strong, #b8808a);
+}
+
+.ai-sub {
+  font-size: 24rpx;
+  color: var(--text-secondary, #8a6d70);
+  margin-top: 4rpx;
 }
 </style>
