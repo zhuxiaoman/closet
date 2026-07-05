@@ -1,0 +1,48 @@
+﻿// 设计 token - 樱粉燕麦（B 方案）
+:root {
+  // 背景
+  --bg-primary: #ffffff;
+  --bg-secondary: #faf6f3;
+  --bg-card: #f9f0ee;
+  --bg-elevated: #fafafa;
+  --bg: #fff7f2;
+
+  // 强调（樱粉）
+  --color-primary: #d49aa5;
+  --color-primary-hover: #b8808a;
+  --accent: #d49aa5;
+  --accent-soft: #fdeef0;
+  --accent-strong: #b8808a;
+
+  // 文字
+  --text-primary: #4a3a3a;
+  --text-secondary: #8a6d70;
+  --text-disabled: rgba(184, 128, 138, 0.6);
+
+  // 边框
+  --border-color: #f0d9dd;
+
+  // 状态
+  --color-success: #7a9070;
+  --color-warning: #d49aa5;
+  --color-error: #c75d6d;
+
+  // 圆角
+  --radius-card: 12px;
+  --radius-button: 18px;
+  --radius-input: 10px;
+  --radius-square: 8px;
+
+  // 阴影
+  --shadow-card: 0 6px 20px rgba(184, 128, 138, 0.18), 0 2px 4px rgba(184, 128, 138, 0.08);
+  --shadow-card-soft: 0 1px 3px rgba(184, 128, 138, 0.08);
+  --shadow: rgba(184, 128, 138, 0.12);
+
+  // 字号
+  --font-h1: 18px;
+  --font-h2: 16px;
+  --font-h3: 14px;
+  --font-body: 12px;
+  --font-helper: 11px;
+  --font-caption: 9px;
+}
