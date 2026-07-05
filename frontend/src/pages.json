@@ -43,6 +43,12 @@
 			}
 		},
 		{
+			"path": "pages/ai-generator/ai-generator",
+			"style": {
+				"navigationBarTitleText": "AI 搭配"
+			}
+		},
+		{
 			"path": "pages/settings/index",
 			"style": {
 				"navigationBarTitleText": "设置"
@@ -68,6 +74,10 @@
 			{
 				"pagePath": "pages/closet/closet",
 				"text": "衣橱"
+			},
+			{
+				"pagePath": "pages/ai-generator/ai-generator",
+				"text": "AI"
 			},
 			{
 				"pagePath": "pages/outfits/outfits",
